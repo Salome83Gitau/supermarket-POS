@@ -1,0 +1,155 @@
+:root{
+    --container-color:#A382C3;
+    --setup-color:#E5DBEF;
+    --text-color:#000000;
+    --button-color:linear-gradient(to right ,#5f3481,#b784d7 );
+    --page-color:linear-gradient(to right ,#FDFCFE,#BAA0D4 );
+    --hover-color:#251742;
+    
+    }
+    body{
+        color: var(--text-color);
+        background-size: cover;
+        background: var(--page-color);
+        size: 16px;
+        font-family: Arial, Helvetica, sans-serif;
+        }
+        .wrapper{
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: auto, auto;
+            grid-template-areas: "container  Company";
+            align-items: center;
+            padding : 5%;
+            column-gap: 0;
+            margin: 0px;
+            }
+            button , input[type="file"]::file-selector-button{
+                background: var(--button-color);
+                color: white;
+                border-radius: 48px;
+                height: 40px;
+                border: solid 1px;
+                min-width: 200px;
+    }
+button:hover , input[type="file"]::file-selector-button:hover{
+    background: var(--hover-color);
+    color: white;
+    }
+    #container{
+        background-color: var(--container-color);
+        border-radius: 38px;
+        margin: 0;
+        height: 600px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        }
+#container-info{
+            text-align: center;
+            width: 450px;
+            font-size: 30px;
+        }
+#Company-setup{
+            background-color: var(--setup-color);
+            margin: 0;
+            height: 520px;
+            align-items: center;
+            width: 474px;
+            border-radius: 38px;
+            align-items: center;
+            }
+            
+            h1 {
+                padding-top: 30px;
+                text-align: center;
+                }
+                #btn {
+                    padding-left: 120px;
+                    }
+                    #container-info {
+                        font-family: monospace;
+                        display: inline-block;
+                        overflow: hidden;
+                        white-space: nowrap;
+                        border-right: 2px solid black;
+                        animation: typing 3.5s steps(40, end), blink-caret 0.75s step-end infinite;
+                        
+                        }
+                        @keyframes typing {
+                            from { width: 0; }
+                            to { width: 65%; }
+                            }
+        @keyframes blink-caret {
+            from, to { border-color: transparent; }
+            50% { border-color: black; }
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+        }
+        
+        #form-group {
+            position: relative;
+            margin: 20px 0 20px 20px;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        #form-group input[type="text"],
+        #form-group input[type="tel"],
+        #form-group input[type="email"],
+        #form-group input[type="password"],
+        #form-group input[type="file"] {
+            width: 80%;
+            border: none;
+            outline: none;
+            border-bottom: 2px solid black;
+            background: none;
+            border-radius: 30px;
+            padding-left: 15px;
+    
+            ;
+        }
+        
+        #form-group input[type="file"] {
+            border: none;
+            outline: none;
+            font-family: sans-serif;
+           color: var(--text-color);
+        }
+        
+        #form-group input::placeholder {
+            color: transparent;
+        }
+        
+        #form-group label {
+            position: absolute;
+            left: 0;
+            bottom: 5px; 
+            color: var(--text-color);
+            transition: all 0.2s ease;
+            pointer-events: none;
+            padding-left: 15px;
+
+        }
+        #form-group input[type="text"]:focus + label,#form-group input[type="email"]:focus + label,#form-group input[type="tel"]:focus + label,#form-group input[type="password"]:focus + label,
+        #form-group input[type="password"]:not(:placeholder-shown) + label,
+        #form-group input[type="text"]:not(:placeholder-shown) + label,#form-group input[type="email"]:not(:placeholder-shown) + label,#form-group input[type="tel"]:not(:placeholder-shown) + label  {
+            transform: translateY(-30px);
+            font-size: 12px;
+            color: var(--container-color); 
+        }
+        #form-group input[type="file"]:focus + label, #form-group input[type="file"]:not(:placeholder-shown) + label {
+            bottom: 40px;
+            color: var(--text-color); 
+        }
+#Select{
+    padding-left: 30px ;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+
