@@ -14,7 +14,7 @@
         </div>
         <div id="Company-setup">
             <h1>Admin Account setup</h1>
-            <form action="Product_activation.html" method="post">
+            <form action="<?php echo htmlspecialchars($_SERVER["Product_activation.php"])?>" method="post">
                 <div id="form-group">
                     <input type="text" name="full_name" id="full_name" placeholder=" " required>
                     <label for="full_name">Full name</label>

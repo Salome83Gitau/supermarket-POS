@@ -14,7 +14,7 @@
         </div>
         <div id="Company-setup">
             <h1>Login</h1>
-            <form action="" method="post">
+            <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"])?>" method="post">
                  <br> <br> <br>
                 <div id="form-group">
                     <input type="text" name="Username" id="Username" placeholder=" " required>

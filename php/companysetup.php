@@ -14,7 +14,7 @@
         </div>
         <div id="Company-setup">
             <h1>Company setup</h1>
-            <form action="adminsetup.html" method="post">
+            <form action="<?php echo htmlspecialchars($_SERVER["adminsetup.php"])?>" method="post">
                 <div id="form-group">
                     <input type="text" name="Company_name" id="Company_name" placeholder=" " required>
                     <label for="Company_name">Company name</label>
