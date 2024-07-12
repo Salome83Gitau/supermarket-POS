@@ -79,13 +79,18 @@ if ($_SERVER["REQUEST_METHOD"]== "POST"){
     else {
         $price= test_input($_POST("price"));
     }
+    if(empty($_POST("cost"))){
+        $costErr="cost is required";
+    }
+    else {
+        $cost= test_input($_POST("cost"));
+    }
     
 
 }  
 
 
 
-    $cost= test_input($_POST("cost"));
     $stock_quantity= test_input($_POST("stock_quantity"));
     $expiration_date= test_input($_POST("expiration_date"));
     $barcode= test_input($_POST("barcode"));
