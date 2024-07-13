@@ -86,21 +86,69 @@ if ($_SERVER["REQUEST_METHOD"]== "POST"){
         $cost= test_input($_POST("cost"));
     }
     
+    if(empty($_POST("stock_quantity"))){
+        $stock_quantityErr="stock_quantity is required";
+    }
+    else {
+        $stock_quantity= test_input($_POST("stock_quantity"));
+    }
+
+    if(empty($_POST("expiration_date"))){
+        $expiration_dateErr="expiration_date is required";
+    }
+    else {
+        $expiration_date= test_input($_POST("expiration_date"));
+    }
+    
+    if(empty($_POST("barcode"))){
+        $barcodeErr="barcode is required";
+    }
+    else {
+        $barcode= test_input($_POST("barcode"));
+    }
+    
+    if(empty($_POST("customer_name"))){
+        $customer_nameErr="customer_name is required";
+    }
+    else {
+        $customer_name= test_input($_POST("customer_name"));
+    }
+
+    if(empty($_POST("discount_percent"))){
+        $discount_percentErr="discount_percent is required";
+    }
+    else {
+        $discount_percent= test_input($_POST("discount_percent"));
+    }
+
+    if(empty($_POST("start_date"))){
+        $start_dateErr="start_date is required";
+    }
+    else {
+        $start_date= test_input($_POST("start_date"));
+    }
+    
+    if(empty($_POST("end_date"))){
+        $end_dateErr="end_date is required";
+    }
+    else {
+        $end_date= test_input($_POST("end_date"));
+    }
+    
+    if(empty($_POST("start_time"))){
+        $start_timeErr="end_date is required";
+    }
+    else {
+        $start_time= test_input($_POST("start_time"));
+    }
+    if(empty($_POST("end_time"))){
+        $end_timeErr="end_time is required";
+    }
+    else {
+        $end_time= test_input($_POST("end_time"));
+    }
 
 }  
-
-
-
-    $stock_quantity= test_input($_POST("stock_quantity"));
-    $expiration_date= test_input($_POST("expiration_date"));
-    $barcode= test_input($_POST("barcode"));
-    $customer_name= test_input($_POST("customer_name"));
-    $discount_percent= test_input($_POST("discount_percent"));
-    $start_date= test_input($_POST("start_date"));
-    $end_date= test_input($_POST("end_date"));
-    $start_time= test_input($_POST("start_time"));
-    $end_time= test_input($_POST("end_time"));
-}
 
 function test_input($data){
     $data=trim($data);
