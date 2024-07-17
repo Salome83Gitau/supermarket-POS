@@ -1,4 +1,14 @@
-<?php
+ <!-- <?php
+$servername = "localhost";
+$username = "username";
+$password = "password";
+$dbname = "POS";
+
+$conn = new mysqli($servername, $username, $password, $dbname);
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}  
+
 $username = $name = $password = $email = $role =$status = $category_name= $description= $supplier_name = $phone =$product_name =$price=$cost =$stock_quantity=$expiration_date =$barcode =$customer_name  =$discount_name =$discount_percent=$start_date =$end_date=$start_time=$end_time="";
 
 $usernameErr = $nameErr = $passwordErr = $emailErr = $roleErr =$statusErr = $category_nameErr= $descriptionErr= $supplier_nameErr = $phoneErr =$product_nameErr =$priceErr=$costErr =$stock_quantityErr=$expiration_dateErr =$barcodeErr =$customer_nameErr  =$discount_nameErr =$discount_percentErr=$start_dateErr =$end_dateErr=$start_timeErr=$end_timeErr="";
@@ -156,4 +166,4 @@ function test_input($data){
     $data=htmlspecialchars($data);
     return $data;
 }
-?>
+?>  -->

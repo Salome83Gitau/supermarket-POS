@@ -1,5 +1,5 @@
 <?php
-include 'sanitize.php';
+include '../functions/sanitize.php';
 ?>
 <!DOCTYPE html>
 <html lang="en">
