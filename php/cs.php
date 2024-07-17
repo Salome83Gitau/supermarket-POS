@@ -1,7 +1,10 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 
 include '../functions/santz.php';
-include '../php/db_connect.php';
+include '../db_connection.php';
 include '../functions/sanitize.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {

@@ -1,6 +1,6 @@
 <?php
 include '../functions/sanitize.php';
-include '../php/db_connection.php';
+include 'db_connection.php';
 
 ?>
 <!DOCTYPE html>

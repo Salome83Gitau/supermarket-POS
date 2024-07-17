@@ -40,7 +40,7 @@
 </html> -->
 <?php
 include '../functions/sanitize.php';
-include '../php/db_connect.php';
+include 'db_connection.php';
 session_start();
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {

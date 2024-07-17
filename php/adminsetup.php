@@ -47,7 +47,7 @@
 
 <?php
 include '../functions/santz.php';
-include '../php/db_connect.php';
+include 'db_connection.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $full_name = test_input($_POST['full_name']);
