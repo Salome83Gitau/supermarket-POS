@@ -9,6 +9,15 @@ CREATE TABLE `users` (
   `status` varchar(32) DEFAULT NULL,
   PRIMARY KEY (`id`)
 );
+--create table company
+CREATE TABLE company (
+    company_name VARCHAR(255) NOT NULL,
+    phone VARCHAR(20),
+    email VARCHAR(100),
+    location VARCHAR(255),
+    logo BLOB, 
+    PRIMARY KEY (company_name)
+);
 
 -- Create Category table
 CREATE TABLE `category` (
