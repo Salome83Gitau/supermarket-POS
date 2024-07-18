@@ -24,16 +24,17 @@
             column-gap: 0;
             margin: 0px;
             }
-        .Dashboardwrapper{
-            display: grid;
-            grid-template-columns: 1fr  4fr;
-            grid-template-columns: auto, auto;
-            grid-template-areas: "sidebar  dashboard";
-            align-items: center;
-            padding : 1%;
-            column-gap: 0;
-            margin: 0px;
-            }
+            
+  .Dashboardwrapper{
+                display: grid;
+                grid-template-columns: 1fr  4fr;
+                grid-template-columns: auto, auto;
+                grid-template-areas: "sidebar  dashboard";
+                align-items: center;
+                padding : 1%;
+                column-gap: 0;
+                margin: 0px;
+                }
      
 .dashboard-content {
     display: grid;
@@ -89,7 +90,7 @@
     grid-column-start: 3;
     grid-row-start: 4;
 }
-       
+
        
             button , input[type="file"]::file-selector-button{
                 background: var(--button-color);
