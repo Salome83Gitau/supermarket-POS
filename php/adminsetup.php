@@ -1,10 +1,11 @@
 <?php
-include 'dbconnection.php';
-include 'sanitize.php';
+session_start();
+include '../php/dbconnection.php';
+include '../functions/sanitize.php';
 
 $username = $name = $password = $email = $status = "";
-$role = "admin";
-$usernameErr = $nameErr = $passwordErr = $emailErr = $roleErr = $statusErr = "";
+$role = "admin"; // Fixed role assignment for admin
+$usernameErr = $nameErr = $passwordErr = $emailErr = $statusErr = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (empty($_POST["Username"])) {
@@ -22,7 +23,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (empty($_POST["Password"])) {
         $passwordErr = "Password is required";
     } else {
-        $password = password_hash(test_input($_POST["Password"]), PASSWORD_DEFAULT);
+        $password = password_hash(test_input($_POST["Password"]), PASSWORD_DEFAULT); // Hash the password
     }
 
     if (empty($_POST["Email"])) {
@@ -31,8 +32,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $email = test_input($_POST["Email"]);
     }
 
- 
-
+    // For status, assuming it's a dropdown or radio button in the form
     if (empty($_POST["status"])) {
         $statusErr = "Status is required";
     } else {
@@ -40,13 +40,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     // Insert data into database
-    if (empty($usernameErr) && empty($nameErr) && empty($passwordErr) && empty($emailErr) && empty($roleErr) && empty($statusErr)) {
+    if (empty($usernameErr) && empty($nameErr) && empty($passwordErr) && empty($emailErr) && empty($statusErr)) {
         $stmt = $conn->prepare("INSERT INTO users (username, name, password, email, role, status) VALUES (?, ?, ?, ?, ?, ?)");
         $stmt->bind_param("ssssss", $username, $name, $password, $email, $role, $status);
 
         if ($stmt->execute()) {
-            echo "New user created successfully";
-            header("Location:../php/Product_activation.php");
+            // Redirect to another page upon successful insertion
+            header("Location: ../php/Product_activation.php");
+            exit(); // Ensure that script execution stops after redirection
         } else {
             echo "Error: " . $stmt->error;
         }
@@ -73,28 +74,29 @@ $conn->close();
         </div>
         <div id="Company-setup">
             <h1>Admin Account setup</h1>
-            <!-- htmlspecialchars function converts special xters to HTML entities -->
+            <!-- htmlspecialchars function converts special characters to HTML entities -->
             <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
                 <div id="form-group">
                     <input type="text" name="full_name" id="full_name" placeholder=" " required>
                     <label for="full_name">Full name</label>
+                    <span class="error"><?php echo $nameErr; ?></span> <!-- Display error messages -->
                 </div>
                 <div id="form-group">
                     <input type="email" name="Email" id="Email" placeholder=" " required>
                     <label for="Email">Email</label>
-                </div>
-                <div id="form-group">
-                    <input type="tel" name="Phone" id="Phone" placeholder=" " required>
-                    <label for="Phone">Phone</label>
+                    <span class="error"><?php echo $emailErr; ?></span> <!-- Display error messages -->
                 </div>
                 <div id="form-group">
                     <input type="text" name="Username" id="Username" placeholder=" " required>
                     <label for="Username">Username</label>
+                    <span class="error"><?php echo $usernameErr; ?></span> <!-- Display error messages -->
                 </div>
                 <div id="form-group">
                     <input type="password" name="Password" id="Password" placeholder=" " required>
                     <label for="Password">Password</label>
+                    <span class="error"><?php echo $passwordErr; ?></span> <!-- Display error messages -->
                 </div>
+                
                 <div id="btn">
                     <button type="submit">SUBMIT & CONTINUE</button>
                 </div>
@@ -103,5 +105,3 @@ $conn->close();
     </div>
 </body>
 </html>
-
-

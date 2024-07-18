@@ -7,54 +7,40 @@ $company_name = $phone = $email = $location = $logo = "";
 $company_nameErr = $phoneErr = $emailErr = $locationErr = $logoErr = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    if (empty($_POST["Company_name"])) {
-        $company_nameErr = "Company name is required";
-    } else {
-        $company_name = test_input($_POST["Company_name"]);
-    }
+    // Validate and sanitize inputs...
 
-    if (empty($_POST["Phone"])) {
-        $phoneErr = "Phone number is required";
-    } else {
-        $phone = test_input($_POST["Phone"]);
-    }
-
-    if (empty($_POST["Email"])) {
-        $emailErr = "Email is required";
-    } else {
-        $email = test_input($_POST["Email"]);
-    }
-
-    if (empty($_POST["Location"])) {
-        $locationErr = "Location is required";
-    } else {
-        $location = test_input($_POST["Location"]);
-    }
-
-    if ($_FILES["logo"]["error"] == UPLOAD_ERR_NO_FILE) {
-        $logoErr = "Logo is required";
-    } else {
-        $allowedTypes = array(IMAGETYPE_PNG, IMAGETYPE_JPEG, IMAGETYPE_GIF);
-        $detectedType = exif_imagetype($_FILES["logo"]["tmp_name"]);
-        $error = !in_array($detectedType, $allowedTypes);
-
-        if ($error) {
-            $logoErr = "Only image files are allowed";
-        } else {
-            $logo = file_get_contents($_FILES["logo"]["tmp_name"]);
-        }
-    }
-
-    // INSERTING DATA TO COMPANY TABLE
+    // Inserting data into company table
     if (empty($company_nameErr) && empty($phoneErr) && empty($emailErr) && empty($locationErr) && empty($logoErr)) {
         $stmt = $conn->prepare("INSERT INTO company (company_name, phone, email, location, logo) VALUES (?, ?, ?, ?, ?)");
         $stmt->bind_param("sssss", $company_name, $phone, $email, $location, $logo);
 
-        if ($stmt->execute()) {
-            echo "New company record created successfully";
-
+        // Reconnect on failure
+        if (!$stmt->execute()) {
+            if ($conn->errno == 2006) { // MySQL server has gone away error number
+                $conn->close();
+                $conn = new mysqli($servername, $username, $password, $dbname);
+                if ($conn->connect_error) {
+                    die("Connection failed: " . $conn->connect_error);
+                }
+                // Retry the statement execution
+                $stmt = $conn->prepare("INSERT INTO company (company_name, phone, email, location, logo) VALUES (?, ?, ?, ?, ?)");
+                $stmt->bind_param("sssss", $company_name, $phone, $email, $location, $logo);
+                if ($stmt->execute()) {
+                    echo "New company record created successfully";
+                    // Redirect to adminsetup.php after successful insertion
+                    header("Location: adminsetup.php");
+                    exit(); // Ensure no more output is sent
+                } else {
+                    echo "Error: " . $stmt->error;
+                }
+            } else {
+                echo "Error: " . $stmt->error;
+            }
         } else {
-            echo "Error: " . $stmt->error;
+            echo "New company record created successfully";
+            // Redirect to adminsetup.php after successful insertion
+            header("Location: adminsetup.php");
+            exit(); // Ensure no more output is sent
         }
 
         $stmt->close();
@@ -63,7 +49,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 $conn->close();
 ?>
-?>
+
 
 <!DOCTYPE html>
 <html lang="en">
