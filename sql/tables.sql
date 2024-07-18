@@ -11,12 +11,13 @@ CREATE TABLE `users` (
 );
 --create table company
 CREATE TABLE company (
+  `company_id` int NOT NULL AUTO_INCREMENT,
     company_name VARCHAR(255) NOT NULL,
     phone VARCHAR(20),
     email VARCHAR(100),
     location VARCHAR(255),
     logo BLOB, 
-    PRIMARY KEY (company_name)
+    PRIMARY KEY (company_id)
 );
 
 -- Create Category table

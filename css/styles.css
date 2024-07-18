@@ -24,6 +24,8 @@
             column-gap: 0;
             margin: 0px;
             }
+       
+       
             button , input[type="file"]::file-selector-button{
                 background: var(--button-color);
                 color: white;
@@ -151,5 +153,3 @@ button:hover , input[type="file"]::file-selector-button:hover{
     flex-direction: column;
     gap: 3px;
 }
-
-
