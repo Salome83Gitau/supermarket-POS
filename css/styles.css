@@ -268,3 +268,37 @@ button:hover , input[type="file"]::file-selector-button:hover{
     flex-direction: column;
     gap: 3px;
 }
+ .add-button{
+    padding-left: 700px;
+    margin-bottom: 15px;
+}
+table {
+    font-family: Arial, Helvetica, sans-serif;
+    width: 100%;
+    border-collapse: collapse;
+    border-bottom: 1px solid black;
+    
+    
+}
+
+td,  th {
+    border-bottom: 1px solid black;
+    padding: 8px;
+
+}
+
+tr:nth-child(even){background-color: var(--setup-color);}
+tr:nth-child(odd){background-color: var(--container-color);}
+
+tr:hover {background-color:var(--container-color);}
+
+th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: rgb(223, 222, 222);
+    color:var(--text-color);
+    border-collapse: collapse;
+    /* border: 1px solid black; */
+    font-family: 'Courier New', Courier, monospace;
+}

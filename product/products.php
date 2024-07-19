@@ -71,7 +71,7 @@ $conn->close();
         <div class="dashboard">
             <div ><h3 class="dashboard-header">Products</h3></div>
             <div><p>Stock inventory</p></div>
-            <div><button >Add product</button></div>
+            <div class="add-button"><button  >Add product</button></div>
             <div class="table">
                 <table>
                     <tr>
@@ -103,7 +103,6 @@ $conn->close();
             <td><p>brookside</p></td>
             <td><p>100</p></td>
             <td><p>70</p></td>
-            <td><p>100</p></td>
             <td><p>10/10/1030</p></td>
             <td><p>1234</p></td>
             </tr>
