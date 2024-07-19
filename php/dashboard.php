@@ -46,9 +46,9 @@ $conn->close();
             <p><a href="logout.php">Logout</a></p>
         </div>
         <div class="dashboard">
-            <div class="dashboard-header">
-                <h1>Dashboard</h1>
-            </div>
+         
+                <h3 class="dashboard-header">Dashboard</h3>
+            
             <div class="dashboard-content">
                 <div class="sales">
                     <p>Today's sales</p>
