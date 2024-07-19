@@ -121,7 +121,7 @@ CREATE TABLE `shift` (
   FOREIGN KEY (`user_id`) REFERENCES `users`(`id`)
 );
 
--- Create AuditLog table
+-- Create AuditLog table-
 CREATE TABLE `auditlog` (
   `log_id` int NOT NULL AUTO_INCREMENT,
   `user_id` int DEFAULT NULL,

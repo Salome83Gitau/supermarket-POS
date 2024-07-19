@@ -6,6 +6,7 @@
     --page-color:linear-gradient(to right ,#FDFCFE,#BAA0D4 );
     --hover-color:#251742;
     
+    
     }
     body{
         color: var(--text-color);
@@ -30,7 +31,6 @@
                 grid-template-columns: 1fr  4fr;
                 grid-template-columns: auto, auto;
                 grid-template-areas: "sidebar  dashboard";
-                align-items: center;
                 padding : 0;
                 column-gap: 0;
                 margin: 0px;
@@ -43,61 +43,38 @@
     gap: 10px;
     padding-top: 20px;
 }
-.dashboard-header {
-    padding-top: 0px;
-    margin-top: 0;
-    font-size: 30px;
-
+.subdashboardcontent {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); 
+    gap: 15px;
+    padding-top: 20px;
+    
+}
+.dashboard-header  {
+top: 0px;
+font-size: 30px;
+margin-top: 0;
 }
 
+.dashboard-content > :nth-child(2) {
+    background: rgb(232, 76, 76);
+}
+.dashboard-content > :nth-child(1) {
+    background: #C2C0FF;
+}
+.dashboard-content > :nth-child(3) {
+    background: #7E76F6;
+}
+.dashboard-content > :nth-child(4) {
+    background:#A18EB5;
+}
 .dashboard-content > :nth-child(n+5) {
     grid-column: span 1;
 }
-
-.dashboard-content > :nth-child(5) {
-    grid-column-start: 1;
-    grid-row-start: 2;
+.subdashboardcontent > :nth-child(n+10) {
+    grid-column: span 1;
 }
 
-.dashboard-content > :nth-child(6) {
-    grid-column-start: 2;
-    grid-row-start: 2;
-}
-
-.dashboard-content > :nth-child(7) {
-    grid-column-start: 3;
-    grid-row-start: 2;
-}
-
-.dashboard-content > :nth-child(8) {
-    grid-column-start: 1;
-    grid-row-start: 3;
-}
-
-.dashboard-content > :nth-child(9) {
-    grid-column-start: 2;
-    grid-row-start: 3;
-}
-
-.dashboard-content > :nth-child(10) {
-    grid-column-start: 3;
-    grid-row-start: 3;
-}
-
-.dashboard-content > :nth-child(11) {
-    grid-column-start: 1;
-    grid-row-start: 4;
-}
-
-.dashboard-content > :nth-child(12) {
-    grid-column-start: 2;
-    grid-row-start: 4;
-}
-
-.dashboard-content > :nth-child(13) {
-    grid-column-start: 3;
-    grid-row-start: 4;
-}
 .sidebar {
     grid-area: sidebar;
     background-color: var(--container-color);
@@ -111,7 +88,7 @@
 .sidebar p a {
     color:whitesmoke;
     text-decoration: none;
-    padding: 10px 0;
+    padding: 5px 0;
     display: flex;
     padding-left: 80px;
     width: 100%;
@@ -136,9 +113,9 @@
 }
 
 .dashboard {
+    padding-top: 0%;
     grid-area: dashboard;
     padding: 20px;
-    padding-top: 0%;
    
 }
 
@@ -150,10 +127,18 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     text-align: center;
 }
+.subdashboardcontent div {
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
 
 .dashboard-content div p {
     margin: 10px 0;
 }
+ 
 
        
             button , input[type="file"]::file-selector-button{
