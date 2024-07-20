@@ -287,10 +287,10 @@ td,  th {
 
 }
 
-tr:nth-child(even){background-color: var(--setup-color);}
-tr:nth-child(odd){background-color: var(--container-color);}
+tr:nth-child(even){background-color: var(--container-color);}
+tr:nth-child(odd){background-color: var(--setup-color);}
 
-tr:hover {background-color:var(--container-color);}
+tr:hover {background-color: rgb(223, 222, 222);}
 
 th {
     padding-top: 12px;

@@ -3,6 +3,7 @@ session_start();
 include '../php/dbconnection.php';
 include '../functions/count.php';
 
+
 $companyName = "";
 $companyLogo = "";
 $sql = "SELECT company_name, logo FROM company WHERE company_id = 1";
@@ -46,6 +47,7 @@ $conn->close();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
     <link rel="stylesheet" href="../css/styles.css">
+    <script src="../js/addProduct.js"></script>
 </head>
 <body>
     <div class="Dashboardwrapper">
@@ -58,7 +60,7 @@ $conn->close();
             </div>
             <p><a href="../php/dashboard.php">Dashboard</a></p>
             <p><a href="stores.php">Stores</a></p>
-            <p><a href="users.php">Users</a></p>
+            <p><a href="../users/users.php">Users</a></p>
             <p><a href="suppliers.php">Suppliers</a></p>
             <p><a href="category.php">Category</a></p>
             <p><a href="../product/products.php">Products</a></p>
@@ -71,7 +73,8 @@ $conn->close();
         <div class="dashboard">
             <div ><h3 class="dashboard-header">Products</h3></div>
             <div><p>Stock inventory</p></div>
-            <div class="add-button"><button  >Add product</button></div>
+            <div class="add-button"><button >Add product</button></div>
+            <div style="overflow-x: auto;">
             <div class="table">
                 <table>
                     <tr>
@@ -108,7 +111,9 @@ $conn->close();
             </tr>
                 </table>
             </div>
+            </div>
         </div>
     </div>
+   
 </body>
 </html>

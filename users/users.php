@@ -14,6 +14,16 @@ if ($result->num_rows > 0) {
     $companyLogo = base64_encode($row['logo']); 
 }
 
+$userData = [];
+$sql = "SELECT id, username, name, email, role FROM users";
+$result = $conn->query($sql);
+
+if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $userData[] = $row;
+    }
+}
+
 $conn->close();
 ?>
 
@@ -24,6 +34,7 @@ $conn->close();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
     <link rel="stylesheet" href="../css/styles.css">
+    <script src="../js/addProduct.js"></script>
 </head>
 <body>
     <div class="Dashboardwrapper">
@@ -34,7 +45,7 @@ $conn->close();
                 <?php endif; ?>
                 <h2><?php echo htmlspecialchars($companyName); ?></h2>
             </div>
-            <p><a href="#">Dashboard</a></p>
+            <p><a href="../php/dashboard.php">Dashboard</a></p>
             <p><a href="stores.php">Stores</a></p>
             <p><a href="../users/users.php">Users</a></p>
             <p><a href="suppliers.php">Suppliers</a></p>
@@ -47,40 +58,35 @@ $conn->close();
             <p><a href="logout.php">Logout</a></p>
         </div>
         <div class="dashboard">
-            <div class="dashboard-header"><h3 class="dashboard-header">Dashboard</h3>
+            <div ><h3 class="dashboard-header">Users</h3></div>
+            <div><p>Manage users</p></div>
+            <div class="add-button"><button >Add user</button></div>
+            <div style="overflow-x: auto;">
+            <div class="table">
+                <table>
+                    <tr>
+                        <th>ID</th>
+                        <th>Username</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Actions</th>
+                    </tr>
+                    <?php foreach ($userData as $user) { ?>
+                        <tr>
+                            <td><?php echo htmlspecialchars($user['id']); ?></td>
+                            <td><?php echo htmlspecialchars($user['username']); ?></td>
+                            <td><?php echo htmlspecialchars($user['name']); ?></td>
+                            <td><?php echo htmlspecialchars($user['email']); ?></td>
+                            <td><?php echo htmlspecialchars($user['role']); ?></td>
+                            <td>
+                                <a href="edit_user.php?id=<?php echo $user['id']; ?>">Edit</a>
+                                <a href="delete_user.php?id=<?php echo $user['id']; ?>">Delete</a>
+                            </td>
+                        </tr>
+                    <?php } ?>
+                </table>
             </div>
-            
-            <div class="dashboard-content">
-                <div class="sales">
-                    <p>Today's sales</p>
-                    <a href="#"><p>view</p></a>
-                </div>
-                <div class="expired">
-                    <p>Expired</p>
-                    <a href="#"><p>view</p></a>
-                </div>
-                <div class="invoice">
-                    <p>Today's invoices</p>
-                    <a href="#"><p>view</p></a>
-                </div>
-                <div class="newProducts">
-                    <p>New Products</p>
-                    <a href="#"><p>view</p></a>
-                </div>
-            </div>
-            <div class="subdashboardcontent">
-                <div class="suppliers"><p>Suppliers</p>
-                <b><?php echo $supplierCount;?></b>
-            
-            </div>
-                <div class="invoices"><p>Invoices</p></div>
-                <div class="currentmonthinvoices"><p>Current month Invoices</p></div>
-                <div class="last3monthsinvoices"><p>Last 3 months invoices</p></div>
-                <div class="last6monthsinvoices"><p>Last 6 months invoices</p></div>
-                <div class="users"><p>Users</p><b><?php echo $userCount;?></b></div>
-                <div class="availableproducts"><p>Available products</p><b><?php echo $productCount;?></b></div>
-                <div class="yearlyrevenue"><p>Yearly revenue</p></div>
-                <div class="stores"><p>Stores</p> <b><?php echo $storeCount;?></b> </div>
             </div>
         </div>
     </div>
