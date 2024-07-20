@@ -3,11 +3,35 @@ session_start();
 include '../php/dbconnection.php';
 include '../functions/sanitize.php';
 
+// Initialize variables
 $company_name = $phone = $email = $location = $logo = "";
 $company_nameErr = $phoneErr = $emailErr = $locationErr = $logoErr = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Validate and sanitize inputs...
+    // Sanitize and validate form inputs
+    $company_name = test_input($_POST["Company_name"]);
+    $phone = test_input($_POST["Phone"]);
+    $email = test_input($_POST["Email"]);
+    $location = test_input($_POST["Location"]);
+
+    // Handle file upload
+    if (isset($_FILES["logo"]) && $_FILES["logo"]["error"] == UPLOAD_ERR_OK) {
+        $logo_tmp_name = $_FILES["logo"]["tmp_name"];
+        $logo_name = basename($_FILES["logo"]["name"]);
+        $logo_target = "../uploads/" . $logo_name;
+        
+        // Move the file to the target directory
+        if (move_uploaded_file($logo_tmp_name, $logo_target)) {
+            $logo = file_get_contents($logo_target); // Get file contents to store in BLOB
+        } else {
+            $logoErr = "Failed to upload logo.";
+        }
+    }
+
+    // Validate and check for errors
+    if (empty($company_name) || empty($phone) || empty($email) || empty($location)) {
+        // Handle empty fields (add error messages if needed)
+    }
 
     // Inserting data into company table
     if (empty($company_nameErr) && empty($phoneErr) && empty($emailErr) && empty($locationErr) && empty($logoErr)) {
@@ -49,7 +73,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 $conn->close();
 ?>
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -95,4 +118,3 @@ $conn->close();
     </div>
 </body>
 </html>
-
