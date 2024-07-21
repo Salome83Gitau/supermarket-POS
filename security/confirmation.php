@@ -1,66 +1,49 @@
 <?php
-// session_start();
+session_start();
 include '../php/dbconnection.php';
-// include '../functions/sanitize.php';
+include '../functions/sanitize.php';
 
-$error_message = "";
+// Response array
+$response = array('success' => false, 'message' => '');
 
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && isset($_POST['user_id']) && isset($_POST['password'])) {
+// Check if request is AJAX
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['user_id']) && isset($_POST['password'])) {
     $userId = test_input($_POST['user_id']);
-    $action = test_input($_POST['action']);
+    $username = test_input($_POST['username']);
+    $name = test_input($_POST['name']);
+    $email = test_input($_POST['email']);
+    $role = test_input($_POST['role']);
     $password = test_input($_POST['password']);
 
-    $adminId = $_SESSION['admin_id']; // Assuming admin's ID is stored in session
+    // Get admin id from session
+    $adminId = $_SESSION['admin_id']; 
+
+    // Verify admin password
     $sql = "SELECT password FROM users WHERE id='$adminId' AND role='Admin'";
     $result = $conn->query($sql);
 
     if ($result->num_rows > 0) {
         $admin = $result->fetch_assoc();
         if (password_verify($password, $admin['password'])) {
-            if ($action == 'edit') {
-                header("Location: edit-user.php?id=$userId");
-                exit();
-            } elseif ($action == 'delete') {
-                header("Location: delete-user.php?id=$userId");
-                exit();
+            // Password is correct, proceed with update
+            $updateSql = "UPDATE users SET username='$username', name='$name', email='$email', role='$role' WHERE id='$userId'";
+            if ($conn->query($updateSql) === TRUE) {
+                $response['success'] = true;
+                $response['message'] = 'User updated successfully.';
+            } else {
+                $response['message'] = 'Error updating record: ' . $conn->error;
             }
         } else {
-            $error_message = "Invalid password";
+            $response['message'] = 'Invalid password';
         }
     } else {
-        $error_message = "Admin not found";
+        $response['message'] = 'Admin not found';
     }
+    $conn->close();
+} else {
+    $response['message'] = 'Invalid request';
 }
-?>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Confirmation</title>
-    <link rel="stylesheet" href="../css/styles.css">
-    <style>
-        .error-message {
-            color: red;
-            font-weight: bold;
-            margin-top: 10px;
-        }
-    </style>
-</head>
-<body>
-    <div class="confirmation-form">
-        <h2>Enter Password for Confirmation</h2>
-        <form action="confirmation.php" method="post">
-            <input type="hidden" name="user_id" id="user_id" value="<?php echo isset($_POST['user_id']) ? htmlspecialchars($_POST['user_id']) : ''; ?>">
-            <input type="hidden" name="action" id="action" value="<?php echo isset($_POST['action']) ? htmlspecialchars($_POST['action']) : ''; ?>">
-            <label for="password">Password:</label>
-            <input type="password" name="password" id="password" required>
-            <button type="submit">Confirm</button>
-        </form>
-        <?php if (!empty($error_message)) { ?>
-            <p class="error-message"><?php echo $error_message; ?></p>
-        <?php } ?>
-    </div>
-</body>
-</html>
+// Return JSON response
+echo json_encode($response);
+?>
