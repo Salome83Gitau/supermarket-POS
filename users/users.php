@@ -10,12 +10,12 @@ $result = $conn->query($sql);
 
 if ($result->num_rows > 0) {
     $row = $result->fetch_assoc();
-    $companyName = $row['company_name'];
+    $companyName = $row ['company_name'];
     $companyLogo = base64_encode($row['logo']); 
 }
 
 $userData = [];
-$sql = "SELECT id, username, name, email, role, store FROM users";
+$sql = "SELECT id, username, name, email, role FROM users";
 $result = $conn->query($sql);
 
 if ($result->num_rows > 0) {
@@ -70,7 +70,6 @@ $conn->close();
                         <th>Name</th>
                         <th>Email</th>
                         <th>Role</th>
-                        <th>Store</th>
                         <th>Actions</th>
                     </tr>
                     <?php foreach ($userData as $user) { ?>
@@ -80,10 +79,9 @@ $conn->close();
                             <td><?php echo htmlspecialchars($user['name']); ?></td>
                             <td><?php echo htmlspecialchars($user['email']); ?></td>
                             <td><?php echo htmlspecialchars($user['role']); ?></td>
-                            <td><?php echo htmlspecialchars($user['store']); ?></td>
                             <td>
-                                <button class="edit-button">Edit</button>
-                                <button class="delete-button">Delete</button>
+                                <a href="edit-user.php?id=<?php echo $user['id']; ?>" class="edit-link">Edit</a>
+                                <a href="delete-user.php?id=<?php echo $user['id']; ?>" class="delete-link">Delete</a>
                             </td>
                         </tr>
                     <?php } ?>
