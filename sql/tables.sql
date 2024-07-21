@@ -6,7 +6,6 @@ CREATE TABLE `users` (
   `password` varchar(255) DEFAULT NULL,
   `email` varchar(64) DEFAULT NULL,
   `role` varchar(32) DEFAULT NULL,
-  `status` varchar(32) DEFAULT NULL,
   PRIMARY KEY (`id`)
 );
 --create table company

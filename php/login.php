@@ -1,6 +1,7 @@
 <?php
 include '../php/dbconnection.php';
 include '../functions/sanitize.php';
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = test_input($_POST["Username"]);
     $password = test_input($_POST["password"]);
@@ -12,17 +13,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if ($result->num_rows > 0) {
         $row = $result->fetch_assoc();
         if (password_verify($password, $row['password'])) {
-            echo "Login successful";
+            if ($role == "Admin") {
+                header("Location: dashboard.php");
+            } elseif ($role == "Cashier") {
+                header("Location: cashiersDashboard.php");
+            }
+            exit();
         } else {
-            echo "Invalid password";
+            $error_message = "Invalid password";
         }
     } else {
-        echo "Invalid username or role";
+        $error_message = "Invalid username or role";
     }
 }
 
 $conn->close();
-
 ?>
 
 <!DOCTYPE html>
@@ -56,6 +61,11 @@ $conn->close();
                     <label><input type="radio" name="role" value="Cashier"> Cashier</label>
                 </div>
                 <br>
+                <?php
+                if (isset($error_message)) {
+                    echo "<div class='error-message'>$error_message</div>";
+                }
+                ?>
                 <div id="btn">
                     <button type="submit">Sign up</button>
                 </div>

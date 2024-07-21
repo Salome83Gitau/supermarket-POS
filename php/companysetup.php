@@ -3,52 +3,64 @@ session_start();
 include '../php/dbconnection.php';
 include '../functions/sanitize.php';
 
-// Initialize variables
 $company_name = $phone = $email = $location = $logo = "";
 $company_nameErr = $phoneErr = $emailErr = $locationErr = $logoErr = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Sanitize and validate form inputs
-    $company_name = test_input($_POST["Company_name"]);
-    $phone = test_input($_POST["Phone"]);
-    $email = test_input($_POST["Email"]);
-    $location = test_input($_POST["Location"]);
-
-    // Handle file upload
-    if (isset($_FILES["logo"]) && $_FILES["logo"]["error"] == UPLOAD_ERR_OK) {
-        $logo_tmp_name = $_FILES["logo"]["tmp_name"];
-        $logo_name = basename($_FILES["logo"]["name"]);
-        $logo_target = "../uploads/" . $logo_name;
-        
-        // Move the file to the target directory
-        if (move_uploaded_file($logo_tmp_name, $logo_target)) {
-            $logo = file_get_contents($logo_target); // Get file contents to store in BLOB
-        } else {
-            $logoErr = "Failed to upload logo.";
-        }
+    // Sanitize and validate inputs
+    if (empty($_POST["Company_name"])) {
+        $company_nameErr = "Company name is required";
+    } else {
+        $company_name = test_input($_POST["Company_name"]);
     }
 
-    // Validate and check for errors
-    if (empty($company_name) || empty($phone) || empty($email) || empty($location)) {
-        // Handle empty fields (add error messages if needed)
+    if (empty($_POST["Phone"])) {
+        $phoneErr = "Phone is required";
+    } else {
+        $phone = test_input($_POST["Phone"]);
     }
 
-    // Inserting data into company table
+    if (empty($_POST["Email"])) {
+        $emailErr = "Email is required";
+    } else {
+        $email = test_input($_POST["Email"]);
+    }
+
+    if (empty($_POST["Location"])) {
+        $locationErr = "Location is required";
+    } else {
+        $location = test_input($_POST["Location"]);
+    }
+
+    // Handle file upload for logo
+    if (isset($_FILES["logo"]) && $_FILES["logo"]["error"] == 0) {
+        $logo = file_get_contents($_FILES["logo"]["tmp_name"]);
+    } else {
+        $logoErr = "Error uploading logo";
+    }
+
+    // Insert data into database
     if (empty($company_nameErr) && empty($phoneErr) && empty($emailErr) && empty($locationErr) && empty($logoErr)) {
+        // Insert data into database
         $stmt = $conn->prepare("INSERT INTO company (company_name, phone, email, location, logo) VALUES (?, ?, ?, ?, ?)");
+
+        // Check if the statement was prepared successfully
+        if ($stmt === false) {
+            die("Error preparing statement: " . $conn->error);
+        }
+
         $stmt->bind_param("sssss", $company_name, $phone, $email, $location, $logo);
 
         // Reconnect on failure
         if (!$stmt->execute()) {
             if ($conn->errno == 2006) { // MySQL server has gone away error number
                 $conn->close();
-                $conn = new mysqli($servername, $username, $password, $dbname);
-                if ($conn->connect_error) {
-                    die("Connection failed: " . $conn->connect_error);
-                }
+                include '../php/dbconnection.php'; // Reconnect to the database
+
                 // Retry the statement execution
                 $stmt = $conn->prepare("INSERT INTO company (company_name, phone, email, location, logo) VALUES (?, ?, ?, ?, ?)");
                 $stmt->bind_param("sssss", $company_name, $phone, $email, $location, $logo);
+                
                 if ($stmt->execute()) {
                     echo "New company record created successfully";
                     // Redirect to adminsetup.php after successful insertion
@@ -64,10 +76,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             echo "New company record created successfully";
             // Redirect to adminsetup.php after successful insertion
             header("Location: adminsetup.php");
-            exit(); // Ensure no more output is sent
+            exit(); // Ensure that script execution stops after redirection
         }
 
         $stmt->close();
+    } else {
+        // Print errors for debugging
+        echo "Errors found: ";
+        echo "Company Name: " . $company_nameErr . " ";
+        echo "Phone: " . $phoneErr . " ";
+        echo "Email: " . $emailErr . " ";
+        echo "Location: " . $locationErr . " ";
+        echo "Logo: " . $logoErr . " ";
     }
 }
 
@@ -93,22 +113,27 @@ $conn->close();
                 <div id="form-group">
                     <input type="text" name="Company_name" id="Company_name" placeholder=" " required>
                     <label for="Company_name">Company name</label>
+                    <span class="error"><?php echo $company_nameErr; ?></span>
                 </div>
                 <div id="form-group">
                     <input type="tel" name="Phone" id="Phone" placeholder=" " required>
                     <label for="Phone">Phone</label>
+                    <span class="error"><?php echo $phoneErr; ?></span>
                 </div>
                 <div id="form-group">
                     <input type="email" name="Email" id="Email" placeholder=" " required>
                     <label for="Email">Email</label>
+                    <span class="error"><?php echo $emailErr; ?></span>
                 </div>
                 <div id="form-group">
                     <input type="text" name="Location" id="Location" placeholder=" " required>
                     <label for="Location">Location</label>
+                    <span class="error"><?php echo $locationErr; ?></span>
                 </div>
                 <div id="form-group">
                     <input type="file" name="logo" id="logo">
                     <label for="logo">Choose logo</label>
+                    <span class="error"><?php echo $logoErr; ?></span>
                 </div>
                 <div id="btn">
                     <button type="submit">SUBMIT & CONTINUE</button>

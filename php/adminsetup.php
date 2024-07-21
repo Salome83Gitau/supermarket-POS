@@ -3,9 +3,9 @@ session_start();
 include '../php/dbconnection.php';
 include '../functions/sanitize.php';
 
-$username = $name = $password = $email = $status = "";
+$username = $name = $password = $email = "";
 $role = "admin"; // Fixed role assignment for admin
-$usernameErr = $nameErr = $passwordErr = $emailErr = $statusErr = "";
+$usernameErr = $nameErr = $passwordErr = $emailErr = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (empty($_POST["Username"])) {
@@ -32,24 +32,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $email = test_input($_POST["Email"]);
     }
 
-    // For status, assuming it's a dropdown or radio button in the form
-    if (empty($_POST["status"])) {
-        $statusErr = "Status is required";
-    } else {
-        $status = test_input($_POST["status"]);
-    }
-
     // Insert data into database
-    if (empty($usernameErr) && empty($nameErr) && empty($passwordErr) && empty($emailErr) && empty($statusErr)) {
-        $stmt = $conn->prepare("INSERT INTO users (username, name, password, email, role, status) VALUES (?, ?, ?, ?, ?, ?)");
-        $stmt->bind_param("ssssss", $username, $name, $password, $email, $role, $status);
+    if (empty($usernameErr) && empty($nameErr) && empty($passwordErr) && empty($emailErr)) {
+        $stmt = $conn->prepare("INSERT INTO users (username, name, password, email, role) VALUES (?, ?, ?, ?, ?)");
+        if ($stmt === false) {
+            die('Prepare failed: ' . htmlspecialchars($conn->error));
+        }
 
+        $stmt->bind_param("sssss", $username, $name, $password, $email, $role);
         if ($stmt->execute()) {
             // Redirect to another page upon successful insertion
-            header("Location: ../php/Product_activation.php");
-            exit(); // Ensure that script execution stops after redirection
+            header("Location: ../php/login.php");
+            exit();
         } else {
-            echo "Error: " . $stmt->error;
+            echo "Error: " . htmlspecialchars($stmt->error);
         }
 
         $stmt->close();
@@ -74,29 +70,27 @@ $conn->close();
         </div>
         <div id="Company-setup">
             <h1>Admin Account setup</h1>
-            <!-- htmlspecialchars function converts special characters to HTML entities -->
             <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
                 <div id="form-group">
                     <input type="text" name="full_name" id="full_name" placeholder=" " required>
                     <label for="full_name">Full name</label>
-                    <span class="error"><?php echo $nameErr; ?></span> <!-- Display error messages -->
+                    <span class="error"><?php echo $nameErr; ?></span>
                 </div>
                 <div id="form-group">
                     <input type="email" name="Email" id="Email" placeholder=" " required>
                     <label for="Email">Email</label>
-                    <span class="error"><?php echo $emailErr; ?></span> <!-- Display error messages -->
+                    <span class="error"><?php echo $emailErr; ?></span>
                 </div>
                 <div id="form-group">
                     <input type="text" name="Username" id="Username" placeholder=" " required>
                     <label for="Username">Username</label>
-                    <span class="error"><?php echo $usernameErr; ?></span> <!-- Display error messages -->
+                    <span class="error"><?php echo $usernameErr; ?></span>
                 </div>
                 <div id="form-group">
                     <input type="password" name="Password" id="Password" placeholder=" " required>
                     <label for="Password">Password</label>
-                    <span class="error"><?php echo $passwordErr; ?></span> <!-- Display error messages -->
+                    <span class="error"><?php echo $passwordErr; ?></span>
                 </div>
-                
                 <div id="btn">
                     <button type="submit">SUBMIT & CONTINUE</button>
                 </div>
