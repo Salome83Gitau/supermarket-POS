@@ -37,28 +37,28 @@ $conn->close();
     <script src="../js/addProduct.js"></script>
     <style>
         /* Success Message Popup Styles */
-#successPopup .popup-content {
-    background-color: #dff0d8; /* Light green background */
-    color: #3c763d; /* Dark green text */
-    border: 1px solid #d6e9c6; /* Green border */
-}
+        #successPopup .popup-content {
+            background-color: #dff0d8; /* Light green background */
+            color: #3c763d; /* Dark green text */
+            border: 1px solid #d6e9c6; /* Green border */
+        }
 
-#successPopup .popup-content h2 {
-    margin-top: 0;
-}
+        #successPopup .popup-content h2 {
+            margin-top: 0;
+        }
 
-#successPopup .popup-content p {
-    margin: 10px 0;
-}
+        #successPopup .popup-content p {
+            margin: 10px 0;
+        }
 
-#successPopup .popup-content button.closeSuccessBtn {
-    background-color: #3c763d; /* Dark green */
-    color: white;
-}
+        #successPopup .popup-content button.closeSuccessBtn {
+            background-color: #3c763d; /* Dark green */
+            color: white;
+        }
 
-#successPopup .popup-content button.closeSuccessBtn:hover {
-    background-color: #2d6a4f; /* Darker green */
-}
+        #successPopup .popup-content button.closeSuccessBtn:hover {
+            background-color: #2d6a4f; /* Darker green */
+        }
 
         /* Popup styles */
         .popup {
@@ -159,7 +159,7 @@ $conn->close();
                             <td><?php echo htmlspecialchars($user['email']); ?></td>
                             <td><?php echo htmlspecialchars($user['role']); ?></td>
                             <td>
-                                <a href="edit-user.php?id=<?php echo $user['id']; ?>" class="edit-link">Edit</a>
+                                <a href="#" class="edit-link" data-id="<?php echo $user['id']; ?>">Edit</a>
                                 <a href="delete-user.php?id=<?php echo $user['id']; ?>" class="delete-link">Delete</a>
                             </td>
                         </tr>
@@ -191,11 +191,31 @@ $conn->close();
     </div>
 </div>
 
+<!-- Edit User Popup -->
+<div id="editUserPopup" class="popup">
+    <div class="popup-content">
+        <form id="editUserForm" method="post" action="edit-user.php">
+            <h2>Edit User</h2>
+            <input type="hidden" id="editUserId" name="id">
+            <label for="editUsername">Username:</label>
+            <input type="text" id="editUsername" name="username" placeholder="Username" required>
+            <label for="editName">Name:</label>
+            <input type="text" id="editName" name="name" placeholder="Name" required>
+            <label for="editEmail">Email:</label>
+            <input type="email" id="editEmail" name="email" placeholder="Email" required>
+            <label for="editRole">Role:</label>
+            <input type="text" id="editRole" name="role" placeholder="Role" required>
+            <button type="submit" id="confirmEditUser">Save Changes</button> <br>
+            <button type="button" class="cancelBtn">Cancel</button>
+        </form>
+    </div>
+</div>
+
 <!-- Success Message Popup -->
 <div id="successPopup" class="popup">
     <div class="popup-content">
         <h2>Success</h2>
-        <p id="successMessage">User added successfully!</p>
+        <p id="successMessage">Action completed successfully!</p>
         <button type="button" class="closeSuccessBtn">Close</button>
     </div>
 </div>
@@ -203,90 +223,89 @@ $conn->close();
 <script>
     document.addEventListener('DOMContentLoaded', () => {
         const addUserForm = document.getElementById('addUserForm');
+        const editUserForm = document.getElementById('editUserForm');
         const addUserPopup = document.getElementById('addUserPopup');
+        const editUserPopup = document.getElementById('editUserPopup');
         const successPopup = document.getElementById('successPopup');
         const addButton = document.querySelector('.add-button button');
-        const cancelButton = document.querySelector('#addUserPopup .cancelBtn');
+        const cancelButtons = document.querySelectorAll('.cancelBtn');
         const closeSuccessButton = document.querySelector('#successPopup .closeSuccessBtn');
 
-        function openAddUserPopup() {
-            addUserPopup.style.display = 'flex';
+        function openPopup(popup) {
+            popup.style.display = 'flex';
         }
 
-        function closeAddUserPopup() {
-            addUserPopup.style.display = 'none';
+        function closePopup(popup) {
+            popup.style.display = 'none';
         }
 
         function openSuccessPopup(message) {
             document.getElementById('successMessage').textContent = message;
-            successPopup.style.display = 'flex';
+            openPopup(successPopup);
         }
 
         function closeSuccessPopup() {
-            successPopup.style.display = 'none';
+            closePopup(successPopup);
         }
 
-        function handleFormSubmission(event) {
+        function handleFormSubmission(event, form, action) {
             event.preventDefault(); // Prevent default form submission
-            const form = event.target;
             
-            if (confirm("Are you sure you want to add this user?")) {
-                // Submit form data using fetch
-                fetch(form.action, {
+            if (confirm("Are you sure you want to proceed with this action?")) {
+                fetch(action, {
                     method: 'POST',
                     body: new FormData(form)
                 })
                 .then(response => response.text())
                 .then(result => {
-                    if (result.includes("success")) { // Adjust the success detection
-                        openSuccessPopup("User added successfully");
-                        closeAddUserPopup(); // Close the popup
+                    if (result.includes("success")) {
+                        openSuccessPopup("Action completed successfully");
+                        closePopup(addUserPopup); // Close the add user popup
+                        closePopup(editUserPopup); // Close the edit user popup
+                        window.location.reload(); // Reload the page to reflect changes
                     } else {
-                        alert("Error adding user: " + result);
+                        alert("Error: " + result);
                     }
                 })
                 .catch(error => alert("Error: " + error));
             }
         }
 
-        // Event listener for the 'Add User' button
-        addButton.addEventListener('click', openAddUserPopup);
+        addButton.addEventListener('click', () => openPopup(addUserPopup));
 
-        // Event listener for the 'Cancel' button in the add user popup
-        cancelButton.addEventListener('click', closeAddUserPopup);
+        cancelButtons.forEach(button => {
+            button.addEventListener('click', (event) => {
+                const popup = event.target.closest('.popup');
+                closePopup(popup);
+            });
+        });
 
-        // Event listener for the 'Close' button in the success popup
         closeSuccessButton.addEventListener('click', closeSuccessPopup);
 
-        // Attach the handleFormSubmission function to the form's submit event
-        addUserForm.addEventListener('submit', handleFormSubmission);
+        addUserForm.addEventListener('submit', (event) => handleFormSubmission(event, addUserForm, 'add-user.php'));
 
-        // Event listener for delete links
-        document.querySelectorAll('.delete-link').forEach(link => {
+        editUserForm.addEventListener('submit', (event) => handleFormSubmission(event, editUserForm, 'edit-user.php'));
+
+        document.querySelectorAll('.edit-link').forEach(link => {
             link.addEventListener('click', function(event) {
-                event.preventDefault(); // Prevent the default link behavior
-                const deleteUrl = this.href;
+                event.preventDefault(); // Prevent default link behavior
+                const userId = this.getAttribute('data-id');
                 
-                if (confirm("Are you sure you want to delete this user?")) {
-                    // Perform the deletion using fetch
-                    fetch(deleteUrl)
-                    .then(response => response.text())
-                    .then(result => {
-                        if (result.includes("success")) {
-                            // Reload the page to reflect changes
-                            window.location.reload();
-                        } else {
-                            alert("Error deleting user: " + result);
-                        }
-                    })
-                    .catch(error => alert("Error: " + error));
-                }
+                fetch(`get-user.php?id=${userId}`)
+                .then(response => response.json())
+                .then(user => {
+                    document.getElementById('editUserId').value = user.id;
+                    document.getElementById('editUsername').value = user.username;
+                    document.getElementById('editName').value = user.name;
+                    document.getElementById('editEmail').value = user.email;
+                    document.getElementById('editRole').value = user.role;
+                    openPopup(editUserPopup);
+                })
+                .catch(error => alert("Error: " + error));
             });
         });
     });
 </script>
-
-
 
 </body>
 </html>
