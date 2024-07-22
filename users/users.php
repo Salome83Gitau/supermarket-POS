@@ -199,7 +199,6 @@ $conn->close();
     </div>
 </div>
 
-
 <script>
     document.addEventListener('DOMContentLoaded', () => {
         const addUserForm = document.getElementById('addUserForm');
@@ -260,8 +259,32 @@ $conn->close();
 
         // Attach the handleFormSubmission function to the form's submit event
         addUserForm.addEventListener('submit', handleFormSubmission);
+
+        // Event listener for delete links
+        document.querySelectorAll('.delete-link').forEach(link => {
+            link.addEventListener('click', function(event) {
+                event.preventDefault(); // Prevent the default link behavior
+                const deleteUrl = this.href;
+                
+                if (confirm("Are you sure you want to delete this user?")) {
+                    // Perform the deletion using fetch
+                    fetch(deleteUrl)
+                    .then(response => response.text())
+                    .then(result => {
+                        if (result.includes("success")) {
+                            // Reload the page to reflect changes
+                            window.location.reload();
+                        } else {
+                            alert("Error deleting user: " + result);
+                        }
+                    })
+                    .catch(error => alert("Error: " + error));
+                }
+            });
+        });
     });
 </script>
+
 
 
 </body>
