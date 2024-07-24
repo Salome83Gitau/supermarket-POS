@@ -211,101 +211,53 @@ $conn->close();
     </div>
 </div>
 
-<!-- Success Message Popup -->
-<div id="successPopup" class="popup">
-    <div class="popup-content">
-        <h2>Success</h2>
-        <p id="successMessage">Action completed successfully!</p>
-        <button type="button" class="closeSuccessBtn">Close</button>
-    </div>
-</div>
-
 <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const addUserForm = document.getElementById('addUserForm');
-        const editUserForm = document.getElementById('editUserForm');
-        const addUserPopup = document.getElementById('addUserPopup');
-        const editUserPopup = document.getElementById('editUserPopup');
-        const successPopup = document.getElementById('successPopup');
-        const addButton = document.querySelector('.add-button button');
-        const cancelButtons = document.querySelectorAll('.cancelBtn');
-        const closeSuccessButton = document.querySelector('#successPopup .closeSuccessBtn');
+    document.addEventListener('DOMContentLoaded', function () {
+    // Add User Button Click Event
+    document.querySelector('.add-button button').addEventListener('click', function () {
+        document.getElementById('addUserPopup').style.display = 'flex';
+    });
 
-        function openPopup(popup) {
-            popup.style.display = 'flex';
-        }
+    // Edit User Link Click Event
+    document.querySelectorAll('.edit-link').forEach(function (editLink) {
+        editLink.addEventListener('click', function (event) {
+            event.preventDefault();
+            var userId = this.getAttribute('data-id');
+            var userRow = this.closest('tr');
+            var username = userRow.cells[1].innerText;
+            var name = userRow.cells[2].innerText;
+            var email = userRow.cells[3].innerText;
+            var role = userRow.cells[4].innerText;
 
-        function closePopup(popup) {
-            popup.style.display = 'none';
-        }
+            document.getElementById('editUserId').value = userId;
+            document.getElementById('editUsername').value = username;
+            document.getElementById('editName').value = name;
+            document.getElementById('editEmail').value = email;
+            document.getElementById('editRole').value = role;
 
-        function openSuccessPopup(message) {
-            document.getElementById('successMessage').textContent = message;
-            openPopup(successPopup);
-        }
-
-        function closeSuccessPopup() {
-            closePopup(successPopup);
-        }
-
-        function handleFormSubmission(event, form, action) {
-            event.preventDefault(); // Prevent default form submission
-            
-            if (confirm("Are you sure you want to proceed with this action?")) {
-                fetch(action, {
-                    method: 'POST',
-                    body: new FormData(form)
-                })
-                .then(response => response.text())
-                .then(result => {
-                    if (result.includes("success")) {
-                        openSuccessPopup("Action completed successfully");
-                        closePopup(addUserPopup); // Close the add user popup
-                        closePopup(editUserPopup); // Close the edit user popup
-                        window.location.reload(); // Reload the page to reflect changes
-                    } else {
-                        alert("Error: " + result);
-                    }
-                })
-                .catch(error => alert("Error: " + error));
-            }
-        }
-
-        addButton.addEventListener('click', () => openPopup(addUserPopup));
-
-        cancelButtons.forEach(button => {
-            button.addEventListener('click', (event) => {
-                const popup = event.target.closest('.popup');
-                closePopup(popup);
-            });
-        });
-
-        closeSuccessButton.addEventListener('click', closeSuccessPopup);
-
-        addUserForm.addEventListener('submit', (event) => handleFormSubmission(event, addUserForm, 'add-user.php'));
-
-        editUserForm.addEventListener('submit', (event) => handleFormSubmission(event, editUserForm, 'edit-user.php'));
-
-        document.querySelectorAll('.edit-link').forEach(link => {
-            link.addEventListener('click', function(event) {
-                event.preventDefault(); // Prevent default link behavior
-                const userId = this.getAttribute('data-id');
-                
-                fetch(`get-user.php?id=${userId}`)
-                .then(response => response.json())
-                .then(user => {
-                    document.getElementById('editUserId').value = user.id;
-                    document.getElementById('editUsername').value = user.username;
-                    document.getElementById('editName').value = user.name;
-                    document.getElementById('editEmail').value = user.email;
-                    document.getElementById('editRole').value = user.role;
-                    openPopup(editUserPopup);
-                })
-                .catch(error => alert("Error: " + error));
-            });
+            document.getElementById('editUserPopup').style.display = 'flex';
         });
     });
+
+    // Cancel Button Click Event for both Add and Edit Popups
+    document.querySelectorAll('.popup .cancelBtn').forEach(function (cancelBtn) {
+        cancelBtn.addEventListener('click', function () {
+            this.closest('.popup').style.display = 'none';
+        });
+    });
+
+    // Close Popups on Outside Click
+    document.querySelectorAll('.popup').forEach(function (popup) {
+        popup.addEventListener('click', function (event) {
+            if (event.target === this) {
+                this.style.display = 'none';
+            }
+        });
+    });
+});
+
 </script>
+
 
 </body>
 </html>
