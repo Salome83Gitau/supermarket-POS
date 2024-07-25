@@ -47,19 +47,18 @@ $conn->close();
             </div>
             <p><a href="../php/dashboard.php">Dashboard</a></p>
             <p><a href="../stores/stores.php">Stores</a></p>
-            <p><a href="#">Users</a></p>
+            <p><a href="../users/users.php">Users</a></p>
             <p><a href="../suppliers/suppliers.php">Suppliers</a></p>
             <p><a href="../category/category.php">Category</a></p>
             <p><a href="../product/products.php">Products</a></p>
             <p><a href="barcode_scanner.php">Barcode Scanner</a></p>
             <p><a href="../reports/reports.php">Reports</a></p>
-            <p><a href="../expired/expired.php" class="expired">Expired</a></p>
+            <p><a href="#" class="expired">Expired</a></p>
             <p><a href="../creditors/creditors.php">Creditors</a></p> <br>
             <p><a href="logout.php">Logout</a></p>
         </div>
         <div class="dashboard">
-            <div><h3 class="dashboard-header">Users</h3></div>
-            <div><p>Users information</p></div>
-            <div class="add-button"><button>Add user</button></div>
-            </body>
+            <div><h3 class="dashboard-header" style="color: red;">Expired</h3></div>
+            <div><p style="color: red;">Expiration notification</p></div>
+           </body>
 </html>

@@ -54,20 +54,20 @@ $conn->close();
         <div class="sidebar">
             <div class="company-info">
                 <?php if ($companyLogo): ?>
-                    <img src="data:image/png;base64,<?php echo $companyLogo; ?>" alt="Company Logo" height="50">
+                    <img src="data:image/png;base64,<?php echo $companyLogo; ?>" alt="Company Logo" height="50" id="logo">
                 <?php endif; ?>
                 <h2><?php echo htmlspecialchars($companyName); ?></h2>
             </div>
             <p><a href="../php/dashboard.php">Dashboard</a></p>
-            <p><a href="stores.php">Stores</a></p>
+            <p><a href="../stores/stores.php">Stores</a></p>
             <p><a href="../users/users.php">Users</a></p>
-            <p><a href="suppliers.php">Suppliers</a></p>
-            <p><a href="category.php">Category</a></p>
-            <p><a href="../product/products.php">Products</a></p>
+            <p><a href="../suppliers/suppliers.php">Suppliers</a></p>
+            <p><a href="../category/category.php">Category</a></p>
+            <p><a href="#">Products</a></p>
             <p><a href="barcode_scanner.php">Barcode Scanner</a></p>
-            <p><a href="reports.php">Reports</a></p>
-            <p><a href="expired.php" class="expired">Expired</a></p>
-            <p><a href="creditors.php">Creditors</a></p> <br>
+            <p><a href="../reports/reports.php">Reports</a></p>
+            <p><a href="../expired/expired.php" class="expired">Expired</a></p>
+            <p><a href="../creditors/creditors.php">Creditors</a></p> <br>
             <p><a href="logout.php">Logout</a></p>
         </div>
         <div class="dashboard">
