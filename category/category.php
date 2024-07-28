@@ -58,7 +58,6 @@ $conn->close();
     width: 300px; /* Fixed width */
     box-shadow: 0 0 10px rgba(0,0,0,0.2); /* Shadow */
     position: relative; /* Position relative for inner positioning */
-    text-align: center; /* Center text */
     justify-content: center;
 }
 
