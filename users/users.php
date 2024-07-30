@@ -215,59 +215,115 @@ $conn->close();
     </div>
 
     <script src="../js/jquery-3.6.0.min.js"></script>
-    <script>
-        // Show Add User Popup
-        $(document).ready(function () {
-            $(".add-button button").on("click", function () {
-                $("#addUserPopup").fadeIn();
-            });
+    <script>document.addEventListener("DOMContentLoaded", function() {
+    const addUserButton = document.querySelector(".add-button button");
+    const addUserPopup = document.getElementById("addUserPopup");
+    const editUserPopup = document.getElementById("editUserPopup");
+    const successPopup = document.getElementById("successPopup");
 
-            // Close Add User Popup
-            $("#addUserPopup .cancelBtn").on("click", function () {
-                $("#addUserPopup").fadeOut();
-            });
+    const cancelButtons = document.querySelectorAll(".cancelBtn");
+    const closeSuccessBtn = document.querySelector(".closeSuccessBtn");
 
-            // Show Edit User Popup
-            $(".edit-link").on("click", function (e) {
-                e.preventDefault();
-                var userId = $(this).data("id");
+    addUserButton.addEventListener("click", function() {
+        addUserPopup.style.display = "flex";
+    });
 
-                // Fetch the user data using AJAX
-                $.ajax({
-                    url: 'get-user.php', // Update with the appropriate URL to get user data
-                    method: 'GET',
-                    data: { id: userId },
-                    success: function (data) {
-                        var user = JSON.parse(data);
-                        $("#editUserId").val(user.id);
-                        $("#editUsername").val(user.username);
-                        $("#editName").val(user.name);
-                        $("#editEmail").val(user.email);
-                        $("#editRole").val(user.role);
-                        $("#editUserPopup").fadeIn();
+    cancelButtons.forEach(button => {
+        button.addEventListener("click", function() {
+            button.closest(".popup").style.display = "none";
+        });
+    });
+
+    closeSuccessBtn.addEventListener("click", function() {
+        successPopup.style.display = "none";
+        location.reload(); // Reload the page
+    });
+
+    document.querySelectorAll(".edit-link").forEach(link => {
+        link.addEventListener("click", function(e) {
+            e.preventDefault();
+            const id = this.dataset.id;
+            fetch(`get-user.php?id=${id}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status !== "error") {
+                        document.getElementById("editUserId").value = data.id;
+                        document.getElementById("editUsername").value = data.username;
+                        document.getElementById("editName").value = data.name;
+                        document.getElementById("editEmail").value = data.email;
+                        document.getElementById("editRole").value = data.role;
+                        editUserPopup.style.display = "flex";
+                    } else {
+                        alert(data.message);
                     }
                 });
-            });
-
-            // Close Edit User Popup
-            $("#editUserPopup .cancelBtn").on("click", function () {
-                $("#editUserPopup").fadeOut();
-            });
-
-            // Close Success Popup
-            $(".closeSuccessBtn").on("click", function () {
-                $("#successPopup").fadeOut();
-                location.reload();
-            });
-
-            // Hide popup when clicking outside
-            $(document).mouseup(function (e) {
-                var container = $(".popup-content");
-                if (!container.is(e.target) && container.has(e.target).length === 0) {
-                    container.parent().fadeOut();
-                }
-            });
         });
+    });
+
+    document.querySelectorAll(".delete-link").forEach(link => {
+        link.addEventListener("click", function(e) {
+            e.preventDefault();
+            const id = this.dataset.id;
+            if (confirm("Are you sure you want to delete this user?")) {
+                fetch("delete-user.php", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded"
+                    },
+                    body: `id=${id}`
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === "success") {
+                        successPopup.style.display = "flex";
+                        document.getElementById("successMessage").innerText = data.message;
+                    } else {
+                        alert(data.message);
+                    }
+                });
+            }
+        });
+    });
+
+    document.getElementById("addUserForm").addEventListener("submit", function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        fetch("add-user.php", {
+            method: "POST",
+            body: new URLSearchParams(formData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === "success") {
+                successPopup.style.display = "flex";
+                document.getElementById("successMessage").innerText = data.message;
+                addUserPopup.style.display = "none";
+            } else {
+                alert(data.message);
+            }
+        });
+    });
+
+    document.getElementById("editUserForm").addEventListener("submit", function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        fetch("edit-user.php", {
+            method: "POST",
+            body: new URLSearchParams(formData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === "success") {
+                successPopup.style.display = "flex";
+                document.getElementById("successMessage").innerText = data.message;
+                editUserPopup.style.display = "none";
+            } else {
+                alert(data.message);
+            }
+        });
+    });
+});
+
     </script>
 </body>
 </html>
