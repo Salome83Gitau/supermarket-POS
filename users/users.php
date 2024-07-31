@@ -1,18 +1,19 @@
 <?php
 include '../php/dbconnection.php';
 
-// Database connection code
-$companyName = "";
+// Fetch company details
+$categoryName = "";
 $companyLogo = "";
 $sql = "SELECT company_name, logo FROM company WHERE company_id = 1";
 $result = $conn->query($sql);
 
 if ($result->num_rows > 0) {
     $row = $result->fetch_assoc();
-    $companyName = $row['company_name'];
+    $categoryName = $row['company_name'];
     $companyLogo = base64_encode($row['logo']);
 }
 
+// Fetch user data
 $userData = [];
 $sql = "SELECT id, username, name, email, role FROM users";
 $result = $conn->query($sql);
@@ -55,7 +56,6 @@ $conn->close();
             width: 300px; /* Fixed width */
             box-shadow: 0 0 10px rgba(0,0,0,0.2); /* Shadow */
             position: relative; /* Position relative for inner positioning */
-            justify-content: center;
         }
 
         .popup-content h2 {
@@ -86,7 +86,6 @@ $conn->close();
             background-color: #007bff; /* Blue background */
             color: #fff; /* White text */
             cursor: pointer; /* Pointer cursor */
-            margin-bottom: 5px; /* Margin below the button */
         }
 
         /* Success Popup Styles */
@@ -99,7 +98,7 @@ $conn->close();
         }
 
         #successPopup #successMessage {
-            margin-bottom: 15px; 
+            margin-bottom: 15px;
         }
 
         #successPopup .closeSuccessBtn {
@@ -112,218 +111,193 @@ $conn->close();
     </style>
 </head>
 <body>
-    <div class="Dashboardwrapper">
-        <div class="sidebar">
-            <div class="company-info">
-                <?php if ($companyLogo): ?>
-                    <img src="data:image/png;base64,<?php echo $companyLogo; ?>" alt="Company Logo" height="50" id="logo">
-                <?php endif; ?>
-                <h2><?php echo htmlspecialchars($companyName); ?></h2>
-            </div>
-            <p><a href="../php/dashboard.php">Dashboard</a></p>
-            <p><a href="../stores/stores.php">Stores</a></p>
-            <p><a href="../users/users.php">Users</a></p>
-            <p><a href="../suppliers/suppliers.php">Suppliers</a></p>
-            <p><a href="../category/category.php">Category</a></p>
-            <p><a href="../product/products.php">Products</a></p>
-            <p><a href="barcode_scanner.php">Barcode Scanner</a></p>
-            <p><a href="../reports/reports.php">Reports</a></p>
-            <p><a href="../expired/expired.php" class="expired">Expired</a></p>
-            <p><a href="../creditors/creditors.php">Creditors</a></p> <br>
-            <p><a href="logout.php">Logout</a></p>
+<div class="Dashboardwrapper">
+    <div class="sidebar">
+        <div class="company-info">
+            <?php if ($companyLogo): ?>
+                <img src="data:image/png;base64,<?php echo $companyLogo; ?>" alt="Company Logo" height="50" id="logo">
+            <?php endif; ?>
+            <h2><?php echo htmlspecialchars($categoryName); ?></h2>
         </div>
-        <div class="dashboard">
-            <div><h3 class="dashboard-header">Users</h3></div>
-            <div><p>User Management</p></div>
-            <div class="add-button"><button>Add User</button></div>
-            <div style="overflow-x: auto;">
-                <div class="table">
-                    <table>
+        <p><a href="../php/dashboard.php">Dashboard</a></p>
+        <p><a href="../stores/stores.php">Stores</a></p>
+        <p><a href="../users/users.php">Users</a></p>
+        <p><a href="../suppliers/suppliers.php">Suppliers</a></p>
+        <p><a href="#">Category</a></p>
+        <p><a href="../product/products.php">Products</a></p>
+        <p><a href="barcode_scanner.php">Barcode Scanner</a></p>
+        <p><a href="../reports/reports.php">Reports</a></p>
+        <p><a href="../expired/expired.php" class="expired">Expired</a></p>
+        <p><a href="../creditors/creditors.php">Creditors</a></p>
+        <br>
+        <p><a href="logout.php">Logout</a></p>
+    </div>
+    <div class="dashboard">
+        <div>
+            <h3 class="dashboard-header">Users</h3>
+        </div>
+        <div>
+            <p>User Management</p>
+        </div>
+        <div class="add-button">
+            <button>Add User</button>
+        </div>
+        <div style="overflow-x: auto;">
+            <div class="table">
+                <table>
+                    <tr>
+                        <th>ID</th>
+                        <th>Username</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Actions</th>
+                    </tr>
+                    <?php foreach ($userData as $user) { ?>
                         <tr>
-                            <th>ID</th>
-                            <th>Username</th>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Role</th>
-                            <th>Actions</th>
+                            <td><?php echo htmlspecialchars($user['id']); ?></td>
+                            <td><?php echo htmlspecialchars($user['username']); ?></td>
+                            <td><?php echo htmlspecialchars($user['name']); ?></td>
+                            <td><?php echo htmlspecialchars($user['email']); ?></td>
+                            <td><?php echo htmlspecialchars($user['role']); ?></td>
+                            <td class="actions">
+                                <a href="#" class="edit-link" data-id="<?php echo $user['id']; ?>">Edit</a>
+                                <a href="../users/delete-user.php" class="delete-link" data-id="<?php echo $user['id']; ?>">Delete</a>
+                            </td>
                         </tr>
-                        <?php foreach ($userData as $user) { ?>
-                            <tr>
-                                <td><?php echo htmlspecialchars($user['id']); ?></td>
-                                <td><?php echo htmlspecialchars($user['username']); ?></td>
-                                <td><?php echo htmlspecialchars($user['name']); ?></td>
-                                <td><?php echo htmlspecialchars($user['email']); ?></td>
-                                <td><?php echo htmlspecialchars($user['role']); ?></td>
-                                <td class="actions">
-                                    <a href="#" class="edit-link" data-id="<?php echo $user['id']; ?>">Edit</a>
-                                    <a href="../users/delete-user.php" class="delete-link" data-id="<?php echo $user['id']; ?>">Delete</a>
-                                </td>
-                            </tr>
-                        <?php } ?>
-                    </table>
-                </div>
+                    <?php } ?>
+                </table>
             </div>
         </div>
     </div>
+</div>
 
-    <!-- Add User Popup -->
-    <div id="addUserPopup" class="popup">
-        <div class="popup-content">
-            <form id="addUserForm" method="post" action="add-user.php">
-                <h2>Add User</h2>
-                <label for="username">Username:</label>
-                <input type="text" id="username" name="username" placeholder="Username" required>
-                <label for="name">Name:</label>
-                <input type="text" id="name" name="name" placeholder="Name" required>
-                <label for="email">Email:</label>
-                <input type="email" id="email" name="email" placeholder="Email" required>
-                <label for="role">Role:</label>
-                <input type="text" id="role" name="role" placeholder="Role" required>
-                <button type="submit" id="confirmAddUser">Add User</button> <br>
-                <button type="button" class="cancelBtn">Cancel</button>
-            </form>
-        </div>
+<!-- Add User Popup -->
+<div id="addUserPopup" class="popup">
+    <div class="popup-content">
+        <form id="addUserForm" method="post" action="add-user.php">
+            <h2>Add User</h2>
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" placeholder="Username" required>
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" placeholder="Name" required>
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" placeholder="Email" required>
+            <label for="role">Role:</label>
+            <input type="text" id="role" name="role" placeholder="Role" required>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" placeholder="Password" required>
+            <button type="submit" id="confirmAddUser">Add User</button>
+            <button type="button" class="cancelBtn">Cancel</button>
+        </form>
     </div>
-    
-    <!-- Edit User Popup -->
-    <div id="editUserPopup" class="popup">
-        <div class="popup-content">
-            <form id="editUserForm" method="post" action="edit-user.php">
-                <h2>Edit User</h2>
-                <input type="hidden" id="editUserId" name="id">
-                <label for="editUsername">Username:</label>
-                <input type="text" id="editUsername" name="username" placeholder="Username" required>
-                <label for="editName">Name:</label>
-                <input type="text" id="editName" name="name" placeholder="Name" required>
-                <label for="editEmail">Email:</label>
-                <input type="email" id="editEmail" name="email" placeholder="Email" required>
-                <label for="editRole">Role:</label>
-                <input type="text" id="editRole" name="role" placeholder="Role" required>
-                <button type="submit" id="confirmEditUser">Save Changes</button> <br>
-                <button type="button" class="cancelBtn">Cancel</button>
-            </form>
-        </div>
+</div>
+
+<!-- Edit User Popup -->
+<div id="editUserPopup" class="popup">
+    <div class="popup-content">
+        <form id="editUserForm" method="post" action="edit-user.php">
+            <h2>Edit User</h2>
+            <input type="hidden" id="editUserId" name="id">
+            <label for="editUsername">Username:</label>
+            <input type="text" id="editUsername" name="username" placeholder="Username" required>
+            <label for="editName">Name:</label>
+            <input type="text" id="editName" name="name" placeholder="Name" required>
+            <label for="editEmail">Email:</label>
+            <input type="email" id="editEmail" name="email" placeholder="Email" required>
+            <label for="editRole">Role:</label>
+            <input type="text" id="editRole" name="role" placeholder="Role" required>
+            <label for="editPassword">Password:</label>
+            <input type="password" id="editPassword" name="password" placeholder="Password">
+            <button type="submit" id="confirmEditUser">Save Changes</button>
+            <button type="button" class="cancelBtn">Cancel</button>
+        </form>
     </div>
+</div>
 
-    <!-- Success Message Popup -->
-    <div id="successPopup" class="popup">
-        <div class="popup-content">
-            <h2>Success</h2>
-            <p id="successMessage">User added successfully!</p>
-            <button class="closeSuccessBtn">Close</button>
-        </div>
+<!-- Success Message Popup -->
+<div id="successPopup" class="popup">
+    <div class="popup-content">
+        <h2>Success</h2>
+        <p id="successMessage">Action completed successfully!</p>
+        <button type="button" class="closeSuccessBtn">Close</button>
     </div>
+</div>
 
-    <script src="../js/jquery-3.6.0.min.js"></script>
-    <script>document.addEventListener("DOMContentLoaded", function() {
-    const addUserButton = document.querySelector(".add-button button");
-    const addUserPopup = document.getElementById("addUserPopup");
-    const editUserPopup = document.getElementById("editUserPopup");
-    const successPopup = document.getElementById("successPopup");
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const addUserBtn = document.querySelector('.add-button button');
+    const addUserPopup = document.getElementById('addUserPopup');
+    const editUserPopup = document.getElementById('editUserPopup');
+    const successPopup = document.getElementById('successPopup');
+    const addUserForm = document.getElementById('addUserForm');
+    const editUserForm = document.getElementById('editUserForm');
 
-    const cancelButtons = document.querySelectorAll(".cancelBtn");
-    const closeSuccessBtn = document.querySelector(".closeSuccessBtn");
-
-    addUserButton.addEventListener("click", function() {
-        addUserPopup.style.display = "flex";
+    addUserBtn.addEventListener('click', () => {
+        addUserPopup.style.display = 'flex';
     });
 
-    cancelButtons.forEach(button => {
-        button.addEventListener("click", function() {
-            button.closest(".popup").style.display = "none";
-        });
-    });
-
-    closeSuccessBtn.addEventListener("click", function() {
-        successPopup.style.display = "none";
-        location.reload(); // Reload the page
-    });
-
-    document.querySelectorAll(".edit-link").forEach(link => {
-        link.addEventListener("click", function(e) {
+    document.querySelectorAll('.edit-link').forEach(link => {
+        link.addEventListener('click', (e) => {
             e.preventDefault();
-            const id = this.dataset.id;
-            fetch(`get-user.php?id=${id}`)
+            const userId = link.getAttribute('data-id');
+            fetch(`../users/get-user.php?id=${userId}`)
                 .then(response => response.json())
                 .then(data => {
-                    if (data.status !== "error") {
-                        document.getElementById("editUserId").value = data.id;
-                        document.getElementById("editUsername").value = data.username;
-                        document.getElementById("editName").value = data.name;
-                        document.getElementById("editEmail").value = data.email;
-                        document.getElementById("editRole").value = data.role;
-                        editUserPopup.style.display = "flex";
-                    } else {
-                        alert(data.message);
-                    }
+                    document.getElementById('editUserId').value = data.id;
+                    document.getElementById('editUsername').value = data.username;
+                    document.getElementById('editName').value = data.name;
+                    document.getElementById('editEmail').value = data.email;
+                    document.getElementById('editRole').value = data.role;
+                    editUserPopup.style.display = 'flex';
                 });
         });
     });
 
-    document.querySelectorAll(".delete-link").forEach(link => {
-        link.addEventListener("click", function(e) {
-            e.preventDefault();
-            const id = this.dataset.id;
-            if (confirm("Are you sure you want to delete this user?")) {
-                fetch("delete-user.php", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/x-www-form-urlencoded"
-                    },
-                    body: `id=${id}`
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status === "success") {
-                        successPopup.style.display = "flex";
-                        document.getElementById("successMessage").innerText = data.message;
-                    } else {
-                        alert(data.message);
-                    }
-                });
+    document.querySelectorAll('.cancelBtn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            addUserPopup.style.display = 'none';
+            editUserPopup.style.display = 'none';
+        });
+    });
+
+    document.querySelector('.closeSuccessBtn').addEventListener('click', () => {
+        successPopup.style.display = 'none';
+        location.reload();
+    });
+
+    addUserForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData(addUserForm);
+        fetch(addUserForm.action, {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                document.getElementById('successMessage').textContent = 'User added successfully!';
+                successPopup.style.display = 'flex';
             }
         });
     });
 
-    document.getElementById("addUserForm").addEventListener("submit", function(e) {
+    editUserForm.addEventListener('submit', function(e) {
         e.preventDefault();
-        const formData = new FormData(this);
-        fetch("add-user.php", {
-            method: "POST",
-            body: new URLSearchParams(formData)
+        const formData = new FormData(editUserForm);
+        fetch(editUserForm.action, {
+            method: 'POST',
+            body: formData
         })
         .then(response => response.json())
         .then(data => {
-            if (data.status === "success") {
-                successPopup.style.display = "flex";
-                document.getElementById("successMessage").innerText = data.message;
-                addUserPopup.style.display = "none";
-            } else {
-                alert(data.message);
-            }
-        });
-    });
-
-    document.getElementById("editUserForm").addEventListener("submit", function(e) {
-        e.preventDefault();
-        const formData = new FormData(this);
-        fetch("edit-user.php", {
-            method: "POST",
-            body: new URLSearchParams(formData)
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === "success") {
-                successPopup.style.display = "flex";
-                document.getElementById("successMessage").innerText = data.message;
-                editUserPopup.style.display = "none";
-            } else {
-                alert(data.message);
+            if (data.success) {
+                document.getElementById('successMessage').textContent = 'User updated successfully!';
+                successPopup.style.display = 'flex';
             }
         });
     });
 });
-
-    </script>
+</script>
 </body>
 </html>
