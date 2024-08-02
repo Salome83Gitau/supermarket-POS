@@ -1,3 +1,32 @@
+<?php
+include '../php/dbconnection.php';
+
+// Fetch company details
+$companyName = "";
+$companyLogo = "";
+$sql = "SELECT company_name, logo FROM company WHERE company_id = 1";
+$result = $conn->query($sql);
+
+if ($result->num_rows > 0) {
+    $row = $result->fetch_assoc();
+    $companyName = $row['company_name'];
+    $companyLogo = base64_encode($row['logo']);
+}
+
+// Fetch user data
+$userData = [];
+$sql = "SELECT id, username, name, email, role FROM users";
+$result = $conn->query($sql);
+
+if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $userData[] = $row;
+    }
+}
+
+$conn->close();
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -27,7 +56,6 @@
             width: 300px;
             box-shadow: 0 0 10px rgba(0,0,0,0.2);
             position: relative;
-            justify-content: center;
         }
 
         .popup-content h2 {
@@ -70,11 +98,11 @@
         }
 
         .popup-content button.closeSuccessBtn {
-            background-color: linear-gradient(to right ,#5f3481,#b784d7 );
+            background: linear-gradient(to right, #5f3481, #b784d7);
         }
 
         .popup-content button.closeSuccessBtn:hover {
-            background-color:#251742; 
+            background-color: #251742;
         }
 
         /* Success Popup Styles */
@@ -101,15 +129,7 @@
                 <h2><?php echo htmlspecialchars($companyName); ?></h2>
             </div>
             <p><a href="../php/dashboard.php">Dashboard</a></p>
-            <p><a href="../stores/stores.php">Stores</a></p>
-            <p><a href="../users/users.php">Users</a></p>
-            <p><a href="../suppliers/suppliers.php">Suppliers</a></p>
-            <p><a href="#">Category</a></p>
-            <p><a href="../product/products.php">Products</a></p>
-            <p><a href="barcode_scanner.php">Barcode Scanner</a></p>
-            <p><a href="../reports/reports.php">Reports</a></p>
-            <p><a href="../expired/expired.php" class="expired">Expired</a></p>
-            <p><a href="../creditors/creditors.php">Creditors</a></p><br>
+            <!-- Other Sidebar Links Here -->
             <p><a href="logout.php">Logout</a></p>
         </div>
         <div class="dashboard">
@@ -127,7 +147,21 @@
                             <th>Role</th>
                             <th>Actions</th>
                         </tr>
-                        <tbody id="userTableBody"></tbody>
+                        <tbody id="userTableBody">
+                            <?php foreach ($userData as $user): ?>
+                                <tr>
+                                    <td><?php echo $user['id']; ?></td>
+                                    <td><?php echo htmlspecialchars($user['username']); ?></td>
+                                    <td><?php echo htmlspecialchars($user['name']); ?></td>
+                                    <td><?php echo htmlspecialchars($user['email']); ?></td>
+                                    <td><?php echo htmlspecialchars($user['role']); ?></td>
+                                    <td>
+                                        <a href="javascript:void(0)" onclick="showEditUserPopup(<?php echo $user['id']; ?>)">Edit</a>
+                                        <a href="javascript:void(0)" onclick="deleteUser(<?php echo $user['id']; ?>)">Delete</a>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
                     </table>
                 </div>
             </div>
@@ -188,97 +222,60 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            fetchUsers();
-
+            // Open Add User Popup
             document.querySelector('.add-button button').addEventListener('click', function() {
                 document.getElementById('addUserPopup').style.display = 'flex';
             });
 
+            // Close Popups
             document.querySelectorAll('.cancelBtn').forEach(button => {
                 button.addEventListener('click', function() {
                     button.closest('.popup').style.display = 'none';
                 });
             });
 
-            document.getElementById('addUserForm').addEventListener('submit', function(event) {
-                event.preventDefault();
-                handleFormSubmit(event.target, 'add-user.php');
-            });
-
-            document.getElementById('editUserForm').addEventListener('submit', function(event) {
-                event.preventDefault();
-                handleFormSubmit(event.target, 'edit-user.php');
-            });
-
-            document.querySelector('.closeSuccessBtn').addEventListener('click', function() {
+            // Success Popup Close Button
+            document.getElementById('successPopup').querySelector('.closeSuccessBtn').addEventListener('click', function() {
                 document.getElementById('successPopup').style.display = 'none';
-                location.reload(); // Reload the page to reflect changes
+                location.reload();
             });
         });
 
-        function fetchUsers() {
-            fetch('get-users.php')
-                .then(response => response.json())
-                .then(data => {
-                    const userTableBody = document.getElementById('userTableBody');
-                    userTableBody.innerHTML = ''; // Clear existing rows
-
-                    data.forEach(user => {
-                        const row = document.createElement('tr');
-                        row.innerHTML = `
-                            <td>${user.id}</td>
-                            <td>${user.username}</td>
-                            <td>${user.name}</td>
-                            <td>${user.email}</td>
-                            <td>${user.role}</td>
-                            <td>
-                                <button onclick="editUser(${user.id})">Edit</button>
-                                <button onclick="deleteUser(${user.id})">Delete</button>
-                            </td>
-                        `;
-                        userTableBody.appendChild(row);
-                    });
-                });
-        }
-
-        function editUser(userId) {
+        // Show Edit User Popup
+        function showEditUserPopup(userId) {
             fetch(`get-user.php?id=${userId}`)
                 .then(response => response.json())
                 .then(data => {
-                    if (data.status === 'success') {
-                        const user = data.user;
-                        document.getElementById('editUserId').value = user.id;
-                        document.getElementById('editUsername').value = user.username;
-                        document.getElementById('editName').value = user.name;
-                        document.getElementById('editEmail').value = user.email;
-                        document.getElementById('editRole').value = user.role;
+                    if (data) {
+                        document.getElementById('editUserId').value = data.id;
+                        document.getElementById('editUsername').value = data.username;
+                        document.getElementById('editName').value = data.name;
+                        document.getElementById('editEmail').value = data.email;
+                        document.getElementById('editRole').value = data.role;
                         document.getElementById('editUserPopup').style.display = 'flex';
-                    } else {
-                        alert(data.message);
                     }
                 });
         }
 
+        // Delete User
         function deleteUser(userId) {
-            // Implement delete user functionality here
+            if (confirm('Are you sure you want to delete this user?')) {
+                fetch(`delete-user.php?id=${userId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            showSuccessPopup('User deleted successfully.');
+                        } else {
+                            showSuccessPopup('Failed to delete user.');
+                        }
+                    });
+            }
         }
 
-        function handleFormSubmit(form, actionUrl) {
-            const formData = new FormData(form);
-            fetch(actionUrl, {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 'success') {
-                    document.getElementById('successMessage').textContent = data.message;
-                    document.getElementById('successPopup').style.display = 'flex';
-                    form.closest('.popup').style.display = 'none';
-                } else {
-                    alert(data.message);
-                }
-            });
+        // Show Success Popup
+        function showSuccessPopup(message) {
+            document.getElementById('successMessage').textContent = message;
+            document.getElementById('successPopup').style.display = 'flex';
         }
     </script>
 </body>
