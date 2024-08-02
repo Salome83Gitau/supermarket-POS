@@ -2,14 +2,14 @@
 include '../php/dbconnection.php';
 
 // Database connection code
-$categoryName = "";
+$companyName = "";
 $companyLogo = "";
 $sql = "SELECT company_name, logo FROM company WHERE company_id = 1";
 $result = $conn->query($sql);
 
 if ($result->num_rows > 0) {
     $row = $result->fetch_assoc();
-    $categoryName = $row['company_name'];
+    $companyName = $row['company_name'];
     $companyLogo = base64_encode($row['logo']);
 }
 
@@ -108,11 +108,11 @@ $conn->close();
 }
 
 #successPopup .closeSuccessBtn {
-    background-color: #28a745; /* Green background */
+    background-color: linear-gradient(to right ,#5f3481,#b784d7 ); 
 }
 
 #successPopup .closeSuccessBtn:hover {
-    background-color: #218838; /* Darker green on hover */
+    background-color:#251742; 
 }
 
     </style>
@@ -125,7 +125,7 @@ $conn->close();
                 <?php if ($companyLogo): ?>
                     <img src="data:image/png;base64,<?php echo $companyLogo; ?>" alt="Company Logo" height="50" id="logo">
                     <?php endif; ?>
-                    <h2><?php echo htmlspecialchars($categoryName); ?></h2>
+                    <h2><?php echo htmlspecialchars($companyName); ?></h2>
                 </div>
                 <p><a href="../php/dashboard.php">Dashboard</a></p>
                 <p><a href="../stores/stores.php">Stores</a></p>
