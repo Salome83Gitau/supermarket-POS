@@ -135,7 +135,7 @@ $conn->close();
         <div class="dashboard">
             <div><h3 class="dashboard-header">Users</h3></div>
             <div><p>User Management</p></div>
-            <div class="add-button"><button>Add User</button></div>
+            <div class="add-button"><button id="addUserBtn">Add User</button></div>
             <div style="overflow-x: auto;">
                 <div class="table">
                     <table>
@@ -157,7 +157,7 @@ $conn->close();
                                     <td><?php echo htmlspecialchars($user['role']); ?></td>
                                     <td>
                                         <a href="javascript:void(0)" onclick="showEditUserPopup(<?php echo $user['id']; ?>)">Edit</a>
-                                        <a href="javascript:void(0)" onclick="deleteUser(<?php echo $user['id']; ?>)">Delete</a>
+                                        <a href="javascript:void(0)" onclick="confirmDeleteUser(<?php echo $user['id']; ?>)">Delete</a>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>
@@ -223,7 +223,7 @@ $conn->close();
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             // Open Add User Popup
-            document.querySelector('.add-button button').addEventListener('click', function() {
+            document.getElementById('addUserBtn').addEventListener('click', function() {
                 document.getElementById('addUserPopup').style.display = 'flex';
             });
 
@@ -257,8 +257,8 @@ $conn->close();
                 });
         }
 
-        // Delete User
-        function deleteUser(userId) {
+        // Confirm Delete User
+        function confirmDeleteUser(userId) {
             if (confirm('Are you sure you want to delete this user?')) {
                 fetch(`delete-user.php?id=${userId}`)
                     .then(response => response.json())
