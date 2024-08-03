@@ -1,51 +1,34 @@
 <?php
 include '../php/dbconnection.php';
 
-// Function to sanitize input data
-function test_input($data) {
-    return htmlspecialchars(stripslashes(trim($data)));
-}
+$id = $_POST['id'];
+$username = $_POST['username'];
+$name = $_POST['name'];
+$email = $_POST['email'];
+$password = password_hash($_POST['password'], PASSWORD_BCRYPT);
+$role = $_POST['role'];
 
-// Check if the request is POST
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // Get the posted data
-    $id = (int)$_POST['id'];
-    $username = test_input($_POST['username']);
-    $name = test_input($_POST['name']);
-    $email = test_input($_POST['email']);
-    $role = test_input($_POST['role']);
-    $password = !empty($_POST['password']) ? password_hash(test_input($_POST['password']), PASSWORD_BCRYPT) : null;
+// Check if the email already exists for a different ID
+$sql = "SELECT * FROM users WHERE email = ? AND id != ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("si", $email, $id);
+$stmt->execute();
+$result = $stmt->get_result();
 
-    // Check for duplicate email
-    $sql = "SELECT id FROM users WHERE email = ? AND id != ?";
+if ($result->num_rows > 0) {
+    echo json_encode(['status' => 'error', 'message' => 'Email already exists.']);
+} else {
+    $sql = "UPDATE users SET username = ?, name = ?, email = ?, password = ?, role = ? WHERE id = ?";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("si", $email, $id);
+    $stmt->bind_param("sssssi", $username, $name, $email, $password, $role, $id);
     $stmt->execute();
-    $result = $stmt->get_result();
 
-    if ($result->num_rows > 0) {
-        // Email already exists
-        echo json_encode(['success' => false, 'message' => 'Email already exists.']);
+    if ($stmt->affected_rows > 0) {
+        echo json_encode(['status' => 'success', 'message' => 'User updated successfully.']);
     } else {
-        // Update user
-        if ($password) {
-            $sql = "UPDATE users SET username = ?, name = ?, password = ?, email = ?, role = ? WHERE id = ?";
-            $stmt = $conn->prepare($sql);
-            $stmt->bind_param("sssssi", $username, $name, $password, $email, $role, $id);
-        } else {
-            $sql = "UPDATE users SET username = ?, name = ?, email = ?, role = ? WHERE id = ?";
-            $stmt = $conn->prepare($sql);
-            $stmt->bind_param("ssssi", $username, $name, $email, $role, $id);
-        }
-
-        if ($stmt->execute()) {
-            echo json_encode(['success' => true, 'message' => 'User updated successfully.']);
-        } else {
-            echo json_encode(['success' => false, 'message' => 'Error updating user.']);
-        }
+        echo json_encode(['status' => 'error', 'message' => 'Failed to update user.']);
     }
-
-    $stmt->close();
-    $conn->close();
 }
+
+$conn->close();
 ?>

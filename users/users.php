@@ -1,7 +1,6 @@
 <?php
 include '../php/dbconnection.php';
 
-// Fetch company details
 $companyName = "";
 $companyLogo = "";
 $sql = "SELECT company_name, logo FROM company WHERE company_id = 1";
@@ -13,14 +12,13 @@ if ($result->num_rows > 0) {
     $companyLogo = base64_encode($row['logo']);
 }
 
-// Fetch user data
-$userData = [];
+$usersData = [];
 $sql = "SELECT id, username, name, email, role FROM users";
 $result = $conn->query($sql);
 
 if ($result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
-        $userData[] = $row;
+        $usersData[] = $row;
     }
 }
 
@@ -32,11 +30,12 @@ $conn->close();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard</title>
+    <title>User Management</title>
     <link rel="stylesheet" href="../css/styles.css">
     <style>
-        /* Popup Styles */
-        .popup {
+        /* Add your CSS styles here */
+         /* Popup Styles */
+         .popup {
             display: none;
             position: fixed;
             top: 0;
@@ -122,48 +121,52 @@ $conn->close();
 <body>
     <div class="Dashboardwrapper">
         <div class="sidebar">
-            <div class="company-info">
+        <div class="company-info">
                 <?php if ($companyLogo): ?>
                     <img src="data:image/png;base64,<?php echo $companyLogo; ?>" alt="Company Logo" height="50" id="logo">
                 <?php endif; ?>
                 <h2><?php echo htmlspecialchars($companyName); ?></h2>
             </div>
             <p><a href="../php/dashboard.php">Dashboard</a></p>
-            <!-- Other Sidebar Links Here -->
+            <p><a href="../stores/stores.php">Stores</a></p>
+            <p><a href="users.php">Users</a></p>
+            <p><a href="../suppliers/suppliers.php">Suppliers</a></p>
+            <p><a href="../category/category.php">Category</a></p>
+            <p><a href="../product/products.php">Products</a></p>
+            <p><a href="../barcode_scanner/barcode_scanner.php">Barcode Scanner</a></p>
+            <p><a href="../reports/reports.php">Reports</a></p>
+            <p><a href="../expired/expired.php" class="expired">Expired</a></p>
+            <p><a href="../creditors/creditors.php">Creditors</a></p> 
             <p><a href="logout.php">Logout</a></p>
         </div>
         <div class="dashboard">
-            <div><h3 class="dashboard-header">Users</h3></div>
+            <h3 class="dashboard-header">Users</h3>
             <div><p>User Management</p></div>
-            <div class="add-button"><button id="addUserBtn">Add User</button></div>
+            <div class="add-button"><button>Add User</button></div>
             <div style="overflow-x: auto;">
-                <div class="table">
-                    <table>
+                <table>
+                    <tr>
+                        <th>ID</th>
+                        <th>Username</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Actions</th>
+                    </tr>
+                    <?php foreach ($usersData as $user) { ?>
                         <tr>
-                            <th>ID</th>
-                            <th>Username</th>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Role</th>
-                            <th>Actions</th>
+                            <td><?php echo htmlspecialchars($user['id']); ?></td>
+                            <td><?php echo htmlspecialchars($user['username']); ?></td>
+                            <td><?php echo htmlspecialchars($user['name']); ?></td>
+                            <td><?php echo htmlspecialchars($user['email']); ?></td>
+                            <td><?php echo htmlspecialchars($user['role']); ?></td>
+                            <td class="actions">
+                                <a href="#" class="edit-link" data-id="<?php echo $user['id']; ?>">Edit</a>
+                                <a href="#" class="delete-link" data-id="<?php echo $user['id']; ?>">Delete</a>
+                            </td>
                         </tr>
-                        <tbody id="userTableBody">
-                            <?php foreach ($userData as $user): ?>
-                                <tr>
-                                    <td><?php echo $user['id']; ?></td>
-                                    <td><?php echo htmlspecialchars($user['username']); ?></td>
-                                    <td><?php echo htmlspecialchars($user['name']); ?></td>
-                                    <td><?php echo htmlspecialchars($user['email']); ?></td>
-                                    <td><?php echo htmlspecialchars($user['role']); ?></td>
-                                    <td>
-                                        <a href="javascript:void(0)" onclick="showEditUserPopup(<?php echo $user['id']; ?>)">Edit</a>
-                                        <a href="javascript:void(0)" onclick="confirmDeleteUser(<?php echo $user['id']; ?>)">Delete</a>
-                                    </td>
-                                </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
-                </div>
+                    <?php } ?>
+                </table>
             </div>
         </div>
     </div>
@@ -174,15 +177,15 @@ $conn->close();
             <form id="addUserForm" method="post" action="add-user.php">
                 <h2>Add User</h2>
                 <label for="username">Username:</label>
-                <input type="text" id="username" name="username" placeholder="Username" required>
+                <input type="text" id="username" name="username" required>
                 <label for="name">Name:</label>
-                <input type="text" id="name" name="name" placeholder="Name" required>
-                <label for="password">Password:</label>
-                <input type="password" id="password" name="password" placeholder="Password" required>
+                <input type="text" id="name" name="name" required>
                 <label for="email">Email:</label>
-                <input type="email" id="email" name="email" placeholder="Email" required>
+                <input type="email" id="email" name="email" required>
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required>
                 <label for="role">Role:</label>
-                <input type="text" id="role" name="role" placeholder="Role" required>
+                <input type="text" id="role" name="role" required>
                 <button type="submit">Add User</button>
                 <button type="button" class="cancelBtn">Cancel</button>
             </form>
@@ -201,82 +204,145 @@ $conn->close();
                 <input type="text" id="editName" name="name" required>
                 <label for="editEmail">Email:</label>
                 <input type="email" id="editEmail" name="email" required>
+                <label for="editPassword">Password:</label>
+                <input type="password" id="editPassword" name="password" required>
                 <label for="editRole">Role:</label>
                 <input type="text" id="editRole" name="role" required>
-                <label for="editPassword">Password (leave blank to keep current password):</label>
-                <input type="password" id="editPassword" name="password">
                 <button type="submit">Save Changes</button>
                 <button type="button" class="cancelBtn">Cancel</button>
             </form>
         </div>
     </div>
 
-    <!-- Success Popup -->
+    <!-- Success Message Popup -->
     <div id="successPopup" class="popup">
         <div class="popup-content">
             <h2>Success</h2>
-            <p id="successMessage"></p>
+            <p id="successMessage">Action completed successfully!</p>
             <button type="button" class="closeSuccessBtn">Close</button>
         </div>
     </div>
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            // Open Add User Popup
-            document.getElementById('addUserBtn').addEventListener('click', function() {
-                document.getElementById('addUserPopup').style.display = 'flex';
+            const addUserButton = document.querySelector(".add-button button");
+            const addUserPopup = document.getElementById("addUserPopup");
+            const editUserPopup = document.getElementById("editUserPopup");
+            const successPopup = document.getElementById("successPopup");
+
+            const cancelButtons = document.querySelectorAll(".cancelBtn");
+            const closeSuccessBtn = document.querySelector(".closeSuccessBtn");
+
+            addUserButton.addEventListener("click", function() {
+                addUserPopup.style.display = "flex";
             });
 
-            // Close Popups
-            document.querySelectorAll('.cancelBtn').forEach(button => {
-                button.addEventListener('click', function() {
-                    button.closest('.popup').style.display = 'none';
+            cancelButtons.forEach(button => {
+                button.addEventListener("click", function() {
+                    button.closest(".popup").style.display = "none";
                 });
             });
 
-            // Success Popup Close Button
-            document.getElementById('successPopup').querySelector('.closeSuccessBtn').addEventListener('click', function() {
-                document.getElementById('successPopup').style.display = 'none';
-                location.reload();
+            closeSuccessBtn.addEventListener("click", function() {
+                successPopup.style.display = "none";
+                location.reload(); // Reload the page
             });
-        });
 
-        // Show Edit User Popup
-        function showEditUserPopup(userId) {
-            fetch(`get-user.php?id=${userId}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data) {
-                        document.getElementById('editUserId').value = data.id;
-                        document.getElementById('editUsername').value = data.username;
-                        document.getElementById('editName').value = data.name;
-                        document.getElementById('editEmail').value = data.email;
-                        document.getElementById('editRole').value = data.role;
-                        document.getElementById('editUserPopup').style.display = 'flex';
+            document.querySelectorAll(".edit-link").forEach(link => {
+                link.addEventListener("click", function(e) {
+                    e.preventDefault();
+                    const id = this.dataset.id;
+                    fetch(`get-user.php?id=${id}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.status !== "error") {
+                                document.getElementById("editUserId").value = data.id;
+                                document.getElementById("editUsername").value = data.username;
+                                document.getElementById("editName").value = data.name;
+                                document.getElementById("editEmail").value = data.email;
+                                document.getElementById("editPassword").value = data.password;
+                                document.getElementById("editRole").value = data.role;
+                                editUserPopup.style.display = "flex";
+                            } else {
+                                alert(data.message);
+                            }
+                        });
+                });
+            });
+
+            document.querySelectorAll(".delete-link").forEach(link => {
+                link.addEventListener("click", function(e) {
+                    e.preventDefault();
+                    const id = this.dataset.id;
+                    if (confirm("Are you sure you want to delete this user?")) {
+                        fetch("delete-user.php", {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/x-www-form-urlencoded"
+                            },
+                            body: `id=${id}`
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.status === "success") {
+                                successPopup.style.display = "flex";
+                                document.getElementById("successMessage").innerText = data.message;
+                            } else {
+                                alert(data.message);
+                            }
+                        });
                     }
                 });
-        }
+            });
 
-        // Confirm Delete User
-        function confirmDeleteUser(userId) {
-            if (confirm('Are you sure you want to delete this user?')) {
-                fetch(`delete-user.php?id=${userId}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            showSuccessPopup('User deleted successfully.');
-                        } else {
-                            showSuccessPopup('Failed to delete user.');
-                        }
-                    });
-            }
-        }
+            document.getElementById("addUserForm").addEventListener("submit", function(e) {
+                e.preventDefault();
+                const formData = new FormData(this);
+                fetch("add-user.php", {
+                    method: "POST",
+                    body: new URLSearchParams(formData)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === "success") {
+                        successPopup.style.display = "flex";
+                        document.getElementById("successMessage").innerText = data.message;
+                        addUserPopup.style.display = "none";
+                    } else {
+                        alert(data.message);
+                    }
+                });
+            });
 
-        // Show Success Popup
-        function showSuccessPopup(message) {
-            document.getElementById('successMessage').textContent = message;
-            document.getElementById('successPopup').style.display = 'flex';
-        }
+            document.getElementById("editUserForm").addEventListener("submit", function(e) {
+                e.preventDefault();
+                const formData = new FormData(this);
+                fetch("edit-user.php", {
+                    method: "POST",
+                    body: new URLSearchParams(formData)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === "success") {
+                        successPopup.style.display = "flex";
+                        document.getElementById("successMessage").innerText = data.message;
+                        editUserPopup.style.display = "none";
+                    } else {
+                        alert(data.message);
+                    }
+                });
+            });
+
+            window.addEventListener("click", function(event) {
+                if (event.target === addUserPopup) {
+                    addUserPopup.style.display = "none";
+                } else if (event.target === editUserPopup) {
+                    editUserPopup.style.display = "none";
+                } else if (event.target === successPopup) {
+                    successPopup.style.display = "none";
+                }
+            });
+        });
     </script>
 </body>
 </html>

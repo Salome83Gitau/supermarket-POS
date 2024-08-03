@@ -1,27 +1,18 @@
 <?php
 include '../php/dbconnection.php';
 
-// Function to sanitize input data
-function test_input($data) {
-    return htmlspecialchars(stripslashes(trim($data)));
+$id = $_POST['id'];
+
+$sql = "DELETE FROM users WHERE id = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("i", $id);
+$stmt->execute();
+
+if ($stmt->affected_rows > 0) {
+    echo json_encode(['status' => 'success', 'message' => 'User deleted successfully.']);
+} else {
+    echo json_encode(['status' => 'error', 'message' => 'Failed to delete user.']);
 }
 
-// Check if the request is GET
-if ($_SERVER['REQUEST_METHOD'] == 'GET') {
-    $id = (int)$_GET['id'];
-
-    // Delete user
-    $sql = "DELETE FROM users WHERE id = ?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("i", $id);
-
-    if ($stmt->execute()) {
-        echo json_encode(['success' => true, 'message' => 'User deleted successfully.']);
-    } else {
-        echo json_encode(['success' => false, 'message' => 'Error deleting user.']);
-    }
-
-    $stmt->close();
-    $conn->close();
-}
+$conn->close();
 ?>

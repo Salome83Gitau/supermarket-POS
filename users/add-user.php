@@ -1,40 +1,33 @@
 <?php
-include 'dbconnection.php';
-include 'sanitize.php';
+include '../php/dbconnection.php';
 
-$response = array();
+$username = $_POST['username'];
+$name = $_POST['name'];
+$email = $_POST['email'];
+$password = password_hash($_POST['password'], PASSWORD_BCRYPT);
+$role = $_POST['role'];
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $username = test_input($_POST['username']);
-    $name = test_input($_POST['name']);
-    $password = password_hash(test_input($_POST['password']), PASSWORD_DEFAULT);
-    $email = test_input($_POST['email']);
-    $role = test_input($_POST['role']);
+// Check if the email already exists
+$sql = "SELECT * FROM users WHERE email = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("s", $email);
+$stmt->execute();
+$result = $stmt->get_result();
 
-    // Check for duplicates
-    $stmt = $conn->prepare("SELECT id FROM users WHERE email = ?");
-    $stmt->bind_param("s", $email);
+if ($result->num_rows > 0) {
+    echo json_encode(['status' => 'error', 'message' => 'Email already exists.']);
+} else {
+    $sql = "INSERT INTO users (username, name, email, password, role) VALUES (?, ?, ?, ?, ?)";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("sssss", $username, $name, $email, $password, $role);
     $stmt->execute();
-    $result = $stmt->get_result();
 
-    if ($result->num_rows > 0) {
-        $response['success'] = false;
-        $response['message'] = 'User with this email already exists.';
+    if ($stmt->affected_rows > 0) {
+        echo json_encode(['status' => 'success', 'message' => 'User added successfully.']);
     } else {
-        $stmt = $conn->prepare("INSERT INTO users (username, name, password, email, role) VALUES (?, ?, ?, ?, ?)");
-        $stmt->bind_param("sssss", $username, $name, $password, $email, $role);
-
-        if ($stmt->execute()) {
-            $response['success'] = true;
-            $response['message'] = 'User added successfully.';
-        } else {
-            $response['success'] = false;
-            $response['message'] = 'Failed to add user.';
-        }
-        $stmt->close();
+        echo json_encode(['status' => 'error', 'message' => 'Failed to add user.']);
     }
-
-    $conn->close();
-    echo json_encode($response);
 }
+
+$conn->close();
 ?>
