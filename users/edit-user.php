@@ -1,12 +1,13 @@
 <?php
 include '../php/dbconnection.php';
+include '../functions/sanitize.php';
 
-$id = $_POST['id'];
-$username = $_POST['username'];
-$name = $_POST['name'];
-$email = $_POST['email'];
+$id =test_input($_POST['id']) ;
+$username = test_input($_POST['username']);
+$name = test_input($_POST['name']);
+$email = test_input($_POST['email']);
 $password = password_hash($_POST['password'], PASSWORD_BCRYPT);
-$role = $_POST['role'];
+$role = test_input($_POST['role']);
 
 // Check if the email already exists for a different ID
 $sql = "SELECT * FROM users WHERE email = ? AND id != ?";
