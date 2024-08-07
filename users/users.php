@@ -33,8 +33,6 @@ $conn->close();
     <title>User Management</title>
     <link rel="stylesheet" href="../css/styles.css">
     <style>
-        /* Add your CSS styles here */
-         /* Popup Styles */
          .popup {
             display: none;
             position: fixed;
