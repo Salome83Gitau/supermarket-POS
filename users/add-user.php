@@ -2,7 +2,6 @@
 include '../php/dbconnection.php';
 include '../functions/sanitize.php';
 
-
 $username = test_input($_POST['username']);
 $name = test_input($_POST['name']);
 $email = test_input($_POST['email']);
