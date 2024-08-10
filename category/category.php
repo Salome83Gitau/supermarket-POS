@@ -137,7 +137,7 @@ $conn->close();
             <p><a href="../reports/reports.php">Reports</a></p>
             <p><a href="../expired/expired.php" class="expired">Expired</a></p>
             <p><a href="../creditors/creditors.php">Creditors</a></p> <br>
-            <p><a href="logout.php">Logout</a></p>
+            <p><a href="../logout/logout.php">Logout</a></p>
         </div>
         <div class="dashboard">
             <div><h3 class="dashboard-header">Categories</h3></div>
