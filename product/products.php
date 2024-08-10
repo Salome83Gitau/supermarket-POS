@@ -220,82 +220,137 @@ $conn->close();
             </form>
         </div>
     </div>
-
-    <!-- Delete Confirmation Popup -->
-    <div id="deleteConfirmationPopup" class="popup">
+    
+    <!-- Success Message Popup -->
+    <div id="successPopup" class="popup">
         <div class="popup-content">
-            <h2>Are you sure you want to delete this product?</h2>
-            <form id="deleteProductForm" method="post" action="delete-product.php">
-                <input type="hidden" id="deleteProductId" name="product_id">
-                <button type="submit">Yes, Delete</button>
-                <button type="button" class="cancelBtn">Cancel</button>
-            </form>
+            <h2>Success</h2>
+            <p id="successMessage">Action completed successfully!</p>
+            <button type="button" class="closeSuccessBtn">Close</button>
         </div>
     </div>
 
     <script>
- document.addEventListener('DOMContentLoaded', function() {
-    const openAddProductPopup = document.getElementById('openAddProductPopup');
-    const addProductPopup = document.getElementById('addProductPopup');
-    const editProductPopup = document.getElementById('editProductPopup');
-    const deleteConfirmationPopup = document.getElementById('deleteConfirmationPopup');
+        document.addEventListener("DOMContentLoaded", function() {
+    const addProductButton = document.querySelector(".add-button button");
+    const addProductPopup = document.getElementById("addProductPopup");
+    const editProductPopup = document.getElementById("editProductPopup");
+    const successPopup = document.getElementById("successPopup");
 
-    const cancelButtons = document.querySelectorAll('.cancelBtn');
-    cancelButtons.forEach(btn => {
-        btn.addEventListener('click', () => {
-            addProductPopup.style.display = 'none';
-            editProductPopup.style.display = 'none';
-            deleteConfirmationPopup.style.display = 'none';
+    const cancelButtons = document.querySelectorAll(".cancelBtn");
+    const closeSuccessBtn = document.querySelector(".closeSuccessBtn");
+
+    addProductButton.addEventListener("click", function() {
+        addProductPopup.style.display = "flex";
+    });
+
+    cancelButtons.forEach(button => {
+        button.addEventListener("click", function() {
+            button.closest(".popup").style.display = "none";
         });
     });
 
-    openAddProductPopup.addEventListener('click', function() {
-        addProductPopup.style.display = 'flex';
+    closeSuccessBtn.addEventListener("click", function() {
+        successPopup.style.display = "none";
+        location.reload(); // Reload the page
     });
 
-    document.querySelectorAll('.edit-link').forEach(link => {
-        link.addEventListener('click', function(e) {
+    document.querySelectorAll(".edit-link").forEach(link => {
+        link.addEventListener("click", function(e) {
             e.preventDefault();
-            const productId = this.getAttribute('data-id');
-            
-            // Fetch product details and populate the form (example with AJAX)
-            fetch(`get-product.php?id=${productId}`)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.json();
-                })
+            const id = this.dataset.id;
+            fetch(`get-product.php?id=${id}`)
+                .then(response => response.json())
                 .then(data => {
-                    if (data) {
-                        document.getElementById('editProductId').value = data.product_id;
-                        document.getElementById('editProductName').value = data.product_name;
-                        document.getElementById('editCategory').value = data.category_id;
-                        document.getElementById('editSupplier').value = data.supplier_id;
-                        document.getElementById('editPrice').value = data.price;
-                        document.getElementById('editCost').value = data.cost;
-                        document.getElementById('editStockQuantity').value = data.stock_quantity;
-                        document.getElementById('editExpirationDate').value = data.expiration_date;
-                        document.getElementById('editBarcode').value = data.barcode;
-                        editProductPopup.style.display = 'flex';
+                    if (data.status !== "error") {
+                        document.getElementById("editProductId").value = data.product_id;
+                        document.getElementById("editProductName").value = data.product_name;
+                        document.getElementById("editCategory").value = data.category_id;
+                        document.getElementById("editSupplier").value = data.supplier_id;
+                        document.getElementById("editPrice").value = data.price;
+                        document.getElementById("editCost").value = data.cost;
+                        document.getElementById("editStockQuantity").value = data.stock_quantity;
+                        document.getElementById("editExpirationDate").value = data.expiration_date;
+                        document.getElementById("editBarcode").value = data.barcode;
+                        editProductPopup.style.display = "flex";
                     } else {
-                        alert('Product details could not be fetched.');
+                        alert(data.message);
                     }
-                })
-                .catch(error => {
-                    console.error('There was a problem with the fetch operation:', error);
-                    alert('An error occurred while fetching product details.');
                 });
         });
     });
 
-    document.querySelectorAll('.delete-link').forEach(link => {
-        link.addEventListener('click', function(e) {
+    document.querySelectorAll(".delete-link").forEach(link => {
+        link.addEventListener("click", function(e) {
             e.preventDefault();
-            const productId = this.getAttribute('data-id');
-            document.getElementById('deleteProductId').value = productId;
-            deleteConfirmationPopup.style.display = 'flex';
+            const id = this.dataset.id;
+            if (confirm("Are you sure you want to delete this product?")) {
+                fetch("delete-product.php", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded"
+                    },
+                    body: `id=${id}`
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === "success") {
+                        successPopup.style.display = "flex";
+                        document.getElementById("successMessage").innerText = data.message;
+                    } else {
+                        alert(data.message);
+                    }
+                });
+            }
         });
+    });
+
+    document.getElementById("addProductForm").addEventListener("submit", function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        fetch("add-product.php", {
+            method: "POST",
+            body: new URLSearchParams(formData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === "success") {
+                successPopup.style.display = "flex";
+                document.getElementById("successMessage").innerText = data.message;
+                addProductPopup.style.display = "none";
+            } else {
+                alert(data.message);
+            }
+        });
+    });
+
+    document.getElementById("editProductForm").addEventListener("submit", function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        fetch("edit-product.php", {
+            method: "POST",
+            body: new URLSearchParams(formData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === "success") {
+                successPopup.style.display = "flex";
+                document.getElementById("successMessage").innerText = data.message;
+                editProductPopup.style.display = "none";
+            } else {
+                alert(data.message);
+            }
+        });
+    });
+
+    window.addEventListener("click", function(event) {
+        if (event.target === addProductPopup) {
+            addProductPopup.style.display = "none";
+        } else if (event.target === editProductPopup) {
+            editProductPopup.style.display = "none";
+        } else if (event.target === successPopup) {
+            successPopup.style.display = "none";
+        }
     });
 });
 

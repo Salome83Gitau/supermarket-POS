@@ -268,7 +268,8 @@ $conn->close();
                 });
             });
 
-            document.querySelectorAll(".delete-link").forEach(link => {
+            
+            });document.querySelectorAll(".delete-link").forEach(link => {
                 link.addEventListener("click", function(e) {
                     e.preventDefault();
                     const id = this.dataset.id;
@@ -291,7 +292,6 @@ $conn->close();
                         });
                     }
                 });
-            });
 
             document.getElementById("addUserForm").addEventListener("submit", function(e) {
                 e.preventDefault();
