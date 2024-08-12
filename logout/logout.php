@@ -6,7 +6,7 @@ session_start();
 session_unset();
 session_destroy();
 
-// Redirect to login page
+// Redirect to login.php
 header("Location: login.php");
 exit();
 ?>
