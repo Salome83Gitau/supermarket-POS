@@ -3,6 +3,13 @@ session_start();
 include '../php/dbconnection.php';
 include '../functions/sanitize.php';
 
+// Redirect to login.php if a company is already set up
+$result = $conn->query("SELECT COUNT(*) FROM company");
+if ($result && $result->fetch_row()[0] > 0) {
+    header("Location: login.php");
+    exit();
+}
+
 $company_name = $phone = $email = $location = $logo = "";
 $company_nameErr = $phoneErr = $emailErr = $locationErr = $logoErr = "";
 
@@ -41,7 +48,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Insert data into database
     if (empty($company_nameErr) && empty($phoneErr) && empty($emailErr) && empty($locationErr) && empty($logoErr)) {
-        // Insert data into database
         $stmt = $conn->prepare("INSERT INTO company (company_name, phone, email, location, logo) VALUES (?, ?, ?, ?, ?)");
 
         // Check if the statement was prepared successfully
