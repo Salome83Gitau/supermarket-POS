@@ -159,7 +159,7 @@ $conn->close();
                                 <td><?php echo htmlspecialchars($category['description']); ?></td>
                                 <td class="actions">
                                     <a href="#" class="edit-link" data-id="<?php echo $category['category_id']; ?>">Edit</a>
-                                    <a href="../category/" class="delete-link" data-id="<?php echo $category['category_id']; ?>">Delete</a>
+                                    <a href="#" class="delete-link" data-id="<?php echo $category['category_id']; ?>">Delete</a>
                                 </td>
                             </tr>
                             <?php } ?>

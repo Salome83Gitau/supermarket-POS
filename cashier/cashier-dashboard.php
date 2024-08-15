@@ -35,13 +35,13 @@ $conn->close();
                 <h2><?php echo htmlspecialchars($companyName); ?></h2>
             </div>
             <p><a href="#">Dashboard</a></p>
-            <p><a href="../category/category.php">Category</a></p>
-            <p><a href="../product/products.php">Products</a></p>
+            <p><a href="../cashier/category.php">Category</a></p>
+            <p><a href="../cashier/products.php">Products</a></p>
             <p><a href="barcode_scanner.php">Barcode Scanner</a></p>
-            <p><a href="../reports/reports.php">Reports</a></p>
+            <p><a href="">Reports</a></p>
             <p><a href="POS" >POS</a></p>
             <p><a href="credit">Credit sales</a></p> <br>
-            <p><a href="logout.php" style="bottom: 10px;">Logout</a></p>
+            <p><a href="../logout/logout.php" style="bottom: 10px;">Logout</a></p>
         </div>
         <div class="dashboard">
             <div class="dashboard-header"><h3 class="dashboard-header">Dashboard</h3>
