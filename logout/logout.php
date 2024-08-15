@@ -7,6 +7,6 @@ session_unset();
 session_destroy();
 
 // Redirect to login.php
-header("Location: login.php");
+header("Location: ../php/login.php");
 exit();
 ?>
