@@ -21,7 +21,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 if ($role == "Admin") {
                     header("Location: dashboard.php");
                 } elseif ($role == "Cashier") {
-                    header("Location: cashiersDashboard.php");
+                    header("Location: ../cashier/cashier-dashboard.php");
                 }
                 exit();
             } else {
