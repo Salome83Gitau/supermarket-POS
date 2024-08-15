@@ -2,28 +2,36 @@
 include '../php/dbconnection.php';
 include '../functions/sanitize.php';
 
+$error_message = "";
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = test_input($_POST["Username"]);
     $password = test_input($_POST["password"]);
-    $role = test_input($_POST["role"]);
 
-    $sql = "SELECT * FROM users WHERE username='$username' AND role='$role'";
-    $result = $conn->query($sql);
+    // Check if role is selected
+    if (isset($_POST["role"])) {
+        $role = test_input($_POST["role"]);
 
-    if ($result->num_rows > 0) {
-        $row = $result->fetch_assoc();
-        if (password_verify($password, $row['password'])) {
-            if ($role == "Admin") {
-                header("Location: dashboard.php");
-            } elseif ($role == "Cashier") {
-                header("Location: cashiersDashboard.php");
+        $sql = "SELECT * FROM users WHERE username='$username' AND role='$role'";
+        $result = $conn->query($sql);
+
+        if ($result->num_rows > 0) {
+            $row = $result->fetch_assoc();
+            if (password_verify($password, $row['password'])) {
+                if ($role == "Admin") {
+                    header("Location: dashboard.php");
+                } elseif ($role == "Cashier") {
+                    header("Location: cashiersDashboard.php");
+                }
+                exit();
+            } else {
+                $error_message = "Invalid password";
             }
-            exit();
         } else {
-            $error_message = "Invalid password";
+            $error_message = "Invalid username or role";
         }
     } else {
-        $error_message = "Invalid username or role";
+        $error_message = "Role is required";
     }
 }
 
@@ -62,7 +70,7 @@ $conn->close();
                 </div>
                 <br>
                 <?php
-                if (isset($error_message)) {
+                if (!empty($error_message)) {
                     echo "<div class='error-message'>$error_message</div>";
                 }
                 ?>
