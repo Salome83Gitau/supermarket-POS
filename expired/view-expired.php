@@ -40,7 +40,7 @@ $conn->close();
         <?php else: ?>
             <p>No expired products found.</p>
         <?php endif; ?>
-        <a href="../php/dashboard.php">Back to Dashboard</a>
+        <a href="../php/dashboard.php">Go back to dashboard</a>
     </div>
 </body>
 </html>
