@@ -43,6 +43,5 @@ $conn->close();
         <a href="../php/dashboard.php">Go back to dashboard</a>
         
     </div>
-    <p></p>
 </body>
 </html>
