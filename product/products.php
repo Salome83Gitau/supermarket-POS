@@ -1,5 +1,5 @@
 <?php
-include '../php/dbconnection.php'; // Ensure this file includes your database connection logic
+include '../php/dbconnection.php'; 
 
 // Fetch company information
 $companyName = "";
@@ -62,7 +62,6 @@ $conn->close();
     <title>Product Management</title>
     <link rel="stylesheet" href="../css/styles.css">
     <style>
-        /* Add your custom styles here */
         .popup {
             display: none;
             position: fixed;
